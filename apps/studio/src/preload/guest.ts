@@ -532,11 +532,30 @@ function releaseSpacePan(): void {
   send({ type: 'space-pan', held: false });
 }
 
+function isPlainModifier(event: KeyboardEvent, key: 'Control' | 'Shift'): boolean {
+  return event.key === key && event.ctrlKey === (key === 'Control') && event.shiftKey === (key === 'Shift') && !event.metaKey && !event.altKey;
+}
+
+function releasePreviewHold(): void {
+  send({ type: 'preview-hold', held: false });
+}
+
 function onKeyUp(event: KeyboardEvent): void {
-  if (event.code === 'Space') releaseSpacePan();
+  if (event.code === 'Space' || event.key === 'Control') releaseSpacePan();
+  if (event.key === 'Shift') releasePreviewHold();
 }
 
 function onKeyDown(event: KeyboardEvent): void {
+  if (event.isTrusted && !event.repeat && isPlainModifier(event, 'Shift') && !isTypingTarget()) {
+    send({ type: 'preview-hold', held: true });
+  }
+  // A Ctrl chord is a shortcut, not a pan.
+  if (isSpacePanRelayed && event.ctrlKey && event.key !== 'Control') releaseSpacePan();
+  if (event.isTrusted && !event.repeat && isPlainModifier(event, 'Control') && !isSpacePanRelayed) {
+    isSpacePanRelayed = true;
+    send({ type: 'space-pan', held: true });
+  }
+
   // A text field keeps its Space; anywhere else the page's own Space (scroll, button press) gives way to the canvas pan.
   if (event.isTrusted && isPlainSpace(event) && (isSpacePanRelayed || !isTypingTarget())) {
     event.preventDefault();
@@ -769,6 +788,7 @@ addEventListener('wheel', guarded(onWheel), captureNonPassive);
 addEventListener('keydown', guarded(onKeyDown), true);
 addEventListener('keyup', guarded(onKeyUp), true);
 addEventListener('blur', guarded(releaseSpacePan));
+addEventListener('blur', guarded(releasePreviewHold));
 // `contextmenu` has its own handler, which swallows it and then relays the point.
 addEventListener('contextmenu', guarded(onContextMenu as (event: Event) => void), captureNonPassive);
 for (const type of ['mousedown', 'mouseup', 'mousemove', 'auxclick'] as const) {

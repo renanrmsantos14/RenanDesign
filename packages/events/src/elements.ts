@@ -303,6 +303,8 @@ export type PickerToHost =
   | { type: 'zoom-chord'; action: CanvasZoomAction; generation: number }
   /** A Space hold that began with focus inside the guest, where the host's key listeners cannot hear it. */
   | { type: 'space-pan'; held: boolean; generation: number }
+  /** A ⇧ hold or release heard inside the guest; the release often lands there after a click moved focus in. */
+  | { type: 'preview-hold'; held: boolean; generation: number }
   | { type: 'error'; report: GuestErrorReport; generation: number };
 
 export interface GuestErrorReport {
@@ -402,6 +404,10 @@ export function parsePickerToHost(value: unknown): PickerToHost | null {
     case 'space-pan':
       return hasExactKeys(record, ['type', 'held', 'generation']) && typeof record.held === 'boolean'
         ? { type: 'space-pan', held: record.held, generation: record.generation as number }
+        : null;
+    case 'preview-hold':
+      return hasExactKeys(record, ['type', 'held', 'generation']) && typeof record.held === 'boolean'
+        ? { type: 'preview-hold', held: record.held, generation: record.generation as number }
         : null;
     case 'hovered': {
       if (!hasExactKeys(record, ['type', 'tag', 'domPath', 'hitTests', 'generation'])) return null;

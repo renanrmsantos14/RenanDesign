@@ -40,6 +40,8 @@ export function admitPickerMessage(
   // A release only ever ENDS a suppression, so it lands wherever it arrives; dropped, it strands the hand on (ONL-2577).
   // The hold keeps the gates below: admitted where no picker is live it would shield a frame the canvas still cannot pan.
   if (message.type === 'space-pan' && !message.held) return message;
+  // Heard in Interact too, where no picker is live, and carries no page content.
+  if (message.type === 'preview-hold') return message;
   // Our preload's own error, armed or not: it carries a scrubbed report and no page content.
   if (message.type === 'error') return message;
   // A late render happens in Interact too, and the report carries nothing about what rendered.
