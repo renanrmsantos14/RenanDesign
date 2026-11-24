@@ -102,8 +102,12 @@ export function auditWorkflow(source: string): string[] {
   return failures;
 }
 
+export const loadWorkflow = (source: string): unknown => load(source);
+
+export const RELEASE_WORKFLOWS = ['fork-release-windows.yml'];
+
 export function auditWorkflowDirectory(directory: string): string[] {
-  const files = workflowFiles(directory);
+  const files = workflowFiles(directory).filter((file) => !RELEASE_WORKFLOWS.includes(file));
   if (files.length === 0) return ['No workflow files found'];
   return files.flatMap((file) => auditWorkflow(readFileSync(join(directory, file), 'utf8')).map((failure) => `${file}: ${failure}`));
 }

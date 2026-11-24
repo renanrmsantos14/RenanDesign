@@ -1,8 +1,8 @@
 import { expect, test } from 'bun:test';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { auditWorkflow, auditWorkflowDirectory, workflowFiles } from './workflow-security';
+import { RELEASE_WORKFLOWS, auditWorkflow, loadWorkflow, auditWorkflowDirectory, workflowFiles } from './workflow-security';
 
 const sha = '11d5960a326750d5838078e36cf38b85af677262';
 const safe = `name: Test
@@ -22,8 +22,18 @@ jobs:
 
 test('public workflow policy covers every repository workflow', () => {
   const directory = join(import.meta.dirname, '../.github/workflows');
-  expect(workflowFiles(directory)).toEqual(['ci.yml', 'source-build.yml']);
+  expect(workflowFiles(directory)).toEqual(['ci.yml', 'fork-release-windows.yml', 'source-build.yml']);
   expect(auditWorkflowDirectory(directory)).toEqual([]);
+});
+
+test('a release workflow runs only on pushes to main of this repository, never on a pull request', () => {
+  const directory = join(import.meta.dirname, '../.github/workflows');
+  for (const file of RELEASE_WORKFLOWS) {
+    const workflow = loadWorkflow(readFileSync(join(directory, file), 'utf8')) as { on: Record<string, unknown>; jobs: Record<string, { if?: string }> };
+    expect(Object.keys(workflow.on).sort()).toEqual(['push', 'workflow_dispatch']);
+    expect(workflow.on['push']).toMatchObject({ branches: ['main'] });
+    for (const job of Object.values(workflow.jobs)) expect(job.if).toBe("github.repository == 'renanrmsantos14/RenanDesign'");
+  }
 });
 
 test('workflow policy accepts credential-free fork CI', () => {

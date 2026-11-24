@@ -66,6 +66,8 @@ export interface StudioConfigOptions {
   defines?: Record<string, string>;
 }
 
+const BUILT_AT = new Date().toISOString();
+
 const LOCAL_PROVIDER = resolve(import.meta.dirname, 'src/main/cloud/local.ts');
 
 function buildEnvironment(mode: string): Record<string, string | undefined> {
@@ -103,7 +105,7 @@ function studioConfig(options: StudioConfigOptions, env: Record<string, string |
       'import.meta.env.MAIN_VITE_TELEMETRY': JSON.stringify(String(telemetry)),
       __OFFICIAL_BUILD__: JSON.stringify(cloud),
       __SELF_UPDATE__: JSON.stringify(Boolean(env['STUDIO_UPDATE_FEED'])),
-      __BUILT_AT__: JSON.stringify(new Date().toISOString()),
+      __BUILT_AT__: JSON.stringify(BUILT_AT),
       'import.meta.env.MAIN_VITE_FLAG_DEFAULTS': JSON.stringify(flagDefaults.join(',')),
       'import.meta.env.MAIN_VITE_CLOUD_BUILD': JSON.stringify(cloud ? commitCount(envDir) : 0),
       'import.meta.env.MAIN_VITE_ONLOOK_CLOUD': JSON.stringify(String(cloud)),
