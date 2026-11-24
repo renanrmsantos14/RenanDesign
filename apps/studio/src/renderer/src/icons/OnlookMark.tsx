@@ -1,27 +1,28 @@
-import { useId, type SVGProps } from 'react';
+import type { SVGProps } from 'react';
 
-// SVG clip IDs are document-global, including separate copies of this mark (ONL-2563).
+/** Handle fill follows the surface so the white-on-accent handles read on both themes; falls back to white outside the app theme. */
+export const MARK_HANDLE_FILL = 'var(--color-background-surface, #fff)';
+const HANDLE_FILL = MARK_HANDLE_FILL;
+
+/** The RenanDesign "selection frame" mark: a dashed frame with four handles around an R. The accent is fixed brand colour; the R follows `currentColor`. */
 export function OnlookMark(props: SVGProps<SVGSVGElement>): React.JSX.Element {
-  const clipId = useId();
   return (
     <svg
       width={20}
       height={20}
-      viewBox="0 0 180 180"
+      viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <clipPath id={clipId}>
-        <circle cx="90" cy="90" r="90" />
-      </clipPath>
-      <path
-        clipPath={`url(#${clipId})`}
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M136.871 166.847C162.737 151.037 180 122.534 180 90C180 40.2944 139.706 0 90 0C40.2944 0 0 40.2944 0 90C0 111.296 7.39648 130.864 19.7606 146.276L52.6117 120.052V83.5641V67.1531L32.5355 47.0762H52.6117H128.129C135.286 47.0762 141.089 52.8786 141.089 60.0362V83.2146C134.327 78.5336 129.459 74.7685 129.459 74.7685L106.612 88.6146L145.728 121.845L136.871 166.847ZM92.5088 57.1567H119.847C119.847 57.1567 120.873 68.5379 105.92 68.5379C92.5083 57.1559 92.5088 57.1567 92.5088 57.1567Z"
-        fill="currentColor"
-      />
+      <rect x="16" y="16" width="68" height="68" rx="3" fill="none" stroke="#5B5BF0" strokeWidth="3" strokeDasharray="6 5" />
+      <g fill={HANDLE_FILL} stroke="#5B5BF0" strokeWidth="3">
+        <rect x="10" y="10" width="12" height="12" rx="2" />
+        <rect x="78" y="10" width="12" height="12" rx="2" />
+        <rect x="10" y="78" width="12" height="12" rx="2" />
+        <rect x="78" y="78" width="12" height="12" rx="2" />
+      </g>
+      <path d="M38 70V31h14a11 11 0 0 1 0 22H38M51 53l13 17" stroke="currentColor" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

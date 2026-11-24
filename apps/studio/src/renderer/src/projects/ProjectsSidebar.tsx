@@ -327,7 +327,7 @@ export function ProjectsSidebar({
       data-testid="projects-sidebar"
     >
       <HStack vAlign="center" justify="between">
-        <OnlookWordmark role="img" aria-label={t('app.name')} height={11} style={{ marginInlineStart: 'var(--spacing-2)', marginInlineEnd: 'var(--spacing-1)' }} />
+        <OnlookWordmark role="img" aria-label={t('app.name')} height={12} style={{ marginInlineStart: 'var(--spacing-2)', marginInlineEnd: 'var(--spacing-1)' }} />
         <Tooltip content={t('projects.badge.beta.tooltip')} placement="below">
         <HStack
           as="button"
