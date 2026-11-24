@@ -15,6 +15,7 @@ import { capabilities } from '../cloud/capabilities.js';
 import { SELF_UPDATE } from '../build-kind.js';
 import { isMac } from '../env/platform.js';
 import { devSwitches } from '../env/dev-switches.js';
+import { dialogParent } from '../window/host.js';
 
 const logger = log('updater');
 
@@ -172,7 +173,8 @@ async function wire(url: string): Promise<void> {
 }
 
 async function askToUpdate(version: string): Promise<boolean> {
-  const { response } = await dialog.showMessageBox({
+  logger.info('asking to update', { version });
+  const options: Electron.MessageBoxOptions = {
     title: t('app.name'),
     type: 'info',
     message: t('update.prompt.message', { version }),
@@ -180,7 +182,13 @@ async function askToUpdate(version: string): Promise<boolean> {
     buttons: [t('update.prompt.now'), t('update.prompt.later')],
     defaultId: 0,
     cancelId: 1,
-  });
+  };
+  const parent = dialogParent();
+  if (parent) {
+    if (parent.isMinimized()) parent.restore();
+    parent.focus();
+  }
+  const { response } = parent ? await dialog.showMessageBox(parent, options) : await dialog.showMessageBox(options);
   return response === 0;
 }
 
