@@ -1,20 +1,28 @@
-## What changed
+<!-- Título em conventional commit, em português: "feat(canvas): segurar Ctrl move o Canvas". Ele vira a linha do release. -->
 
-<!-- One or two sentences on the problem and the change. Link a related issue if there is one. -->
+<!-- Uma ou duas frases: o problema ou o que faltava, como o usuário via. -->
 
-## How you checked it
+## O que muda
+
+- 
+
+## Como
+
+- 
+
+## Limites conhecidos
+
+- 
+
+## Verificação
 
 - [ ] `bun run verify`
-- [ ] `bun run test:e2e`, if this changes a flow in the app
-- [ ] `bun run test:e2e:packaged` against an app from `bun run build:dmg`, if this touches the main process, a native module or `dependencies`
+- [ ] `bun run test:e2e`, se muda um fluxo do app
+- [ ] Um changeset novo (`bun run changeset`, ou `bun run changeset --empty`)
+- [ ] Todo texto em inglês novo ou alterado escrito em todos os idiomas de `packages/i18n/src/locales/`
+- [ ] Nada novo em `dependencies` de `apps/studio`, salvo o que não pode ser empacotado (conferir `asarUnpack`)
+- [ ] Sem segredos no código, nos logs ou em arquivos de env
 
-## Checklist
+## Evidências
 
-- [ ] A new changeset (`bun run changeset`, or `bun run changeset --empty`)
-- [ ] Every new or changed English string is written in every language under `packages/i18n/src/locales/`
-- [ ] Nothing new in `apps/studio` `dependencies`, unless it can't be bundled; if so, `asarUnpack` in `electron-builder.yml` is checked
-- [ ] No secrets or credentials in code, logs or committed env files
-
-## Notes for the reviewer
-
-<!-- Anything you decided that someone might reasonably have decided differently. -->
+<!-- Prints ou vídeo hospedados no GitHub, nunca commitados. -->

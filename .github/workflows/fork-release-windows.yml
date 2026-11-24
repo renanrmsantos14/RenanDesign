@@ -53,6 +53,25 @@ jobs:
           Copy-Item "release/RenanDesign-$v-x64.exe" out
           Get-ChildItem release -File | Where-Object { $_.Name -in @("RenanDesign-$v-x64.exe.blockmap", 'latest.yml') } | Copy-Item -Destination out
           Get-ChildItem out | Select-Object Name, Length
+      - name: Write release notes
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prev=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName 2>/dev/null || true)
+          {
+            echo "## O que há de novo"
+            echo
+            if [ -n "$prev" ]; then
+              changes=$(gh api "repos/$GITHUB_REPOSITORY/compare/$prev...$GITHUB_SHA" \
+                -q '.commits[] | select(.parents | length == 1) | .commit.message | split("\n")[0]' |
+                grep -v '^chore(release)' | sed 's/^/- /' || true)
+              echo "${changes:-- Sem mudanças de código desde $prev.}"
+            else
+              echo "- Primeira versão publicada."
+            fi
+          } > notes.md
+          cat notes.md
       - name: Publish release
         shell: pwsh
         env:
@@ -61,5 +80,5 @@ jobs:
         run: |
           $files = @(Get-ChildItem out -File | ForEach-Object { $_.FullName })
           gh release create "v$env:VERSION" --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA `
-            --title "RenanDesign $env:VERSION" --notes "Build automático do commit $env:GITHUB_SHA (instalador Windows x64, sem assinatura de código)." --latest $files
+            --title "RenanDesign $env:VERSION" --notes-file notes.md --latest $files
           if ($LASTEXITCODE -ne 0) { throw 'gh release create failed' }
