@@ -40,6 +40,11 @@ describe('provider capabilities in main', () => {
     expect(resolveCapabilities({ capabilities: null })).toEqual(NO_CAPABILITIES);
   });
 
+  it('a self-updating fork build checks for updates even when its provider declares none', () => {
+    expect(resolveCapabilities(local, true).updates).toBe(true);
+    expect(resolveCapabilities(local, false).updates).toBe(false);
+  });
+
   it('a provider built before capabilities gets the answers the build switches and its own reading gave', () => {
     let enabled = true;
     const provider = { identity: { enabled: () => enabled }, createOnlookClient() {} };

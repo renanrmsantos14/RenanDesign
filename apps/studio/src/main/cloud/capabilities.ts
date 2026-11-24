@@ -12,10 +12,12 @@ function buildCapabilities(module: object): StudioCapabilities {
   return { account, teams: cloud, github: cloud, report: cloud, survey: cloud, updates: OFFICIAL_BUILD || SELF_UPDATE, links: OFFICIAL_BUILD };
 }
 
-export function resolveCapabilities(module: object): StudioCapabilities {
+export function resolveCapabilities(module: object, selfUpdate = SELF_UPDATE): StudioCapabilities {
   // Read by key: a named import of an export an older provider lacks fails its build.
   const declared: unknown = Reflect.get(module, 'capabilities');
-  return declared === undefined ? buildCapabilities(module) : boundCapabilities(declared);
+  if (declared === undefined) return buildCapabilities(module);
+  const bound = boundCapabilities(declared);
+  return { ...bound, updates: bound.updates || selfUpdate };
 }
 
 export function capabilities(): StudioCapabilities {
