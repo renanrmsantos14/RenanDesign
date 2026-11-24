@@ -2,5 +2,9 @@
   "update.move.message": "要将 RenanDesign 移到“应用程序”文件夹吗？",
   "update.move.detail": "RenanDesign 正从磁盘映像或“下载”文件夹中运行，在这里无法自动更新。移动后，项目和设置都会保留。",
   "update.move.move": "移到“应用程序”",
-  "update.move.notNow": "以后再说"
+  "update.move.notNow": "以后再说",
+  "update.prompt.message": "RenanDesign {version} 现已推出",
+  "update.prompt.detail": "当前版本为 {current}。立即更新将下载新版本并重新启动 RenanDesign。",
+  "update.prompt.now": "立即更新",
+  "update.prompt.later": "稍后"
 }

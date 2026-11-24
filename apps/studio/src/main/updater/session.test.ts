@@ -318,3 +318,36 @@ describe('the real updater event sequence', () => {
     expect(test.updater.installs).toEqual(['1.2.4']);
   });
 });
+
+describe('asking before an update', () => {
+  function asking(answer: boolean) {
+    const updater = new UpdateFixture();
+    const asked: string[] = [];
+    const machine = new UpdateMachine({ emit: () => undefined, waitForNativeStage: false });
+    const session = createUpdateSession(updater as unknown as AppUpdater, machine, undefined, () => undefined, undefined, async (version) => {
+      asked.push(version);
+      return answer;
+    });
+    sessions.push(session);
+    return { updater, asked, session };
+  }
+
+  it('downloads nothing and asks once per version when the designer says later', async () => {
+    const { updater, asked, session } = asking(false);
+    await session.check();
+    await session.check();
+    expect(asked).toEqual(['1.2.3']);
+    expect(updater.downloads).toEqual([]);
+  });
+
+  it('downloads and installs once the designer says update now', async () => {
+    const { updater, session } = asking(true);
+    const check = session.check();
+    while (updater.finishDownload === undefined) await Promise.resolve();
+    updater.finishDownload();
+    await check;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(updater.downloads).toEqual(['1.2.3']);
+    expect(updater.installs).toEqual(['1.2.3']);
+  });
+});

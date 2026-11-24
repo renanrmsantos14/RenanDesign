@@ -19,12 +19,15 @@ export function createUpdateSession(
   nativeUpdater?: NativeStageEmitter,
   report: typeof reportUpdateFailure = reportUpdateFailure,
   wait: (ms: number, signal: AbortSignal) => Promise<void> = (ms, signal) => delay(ms, undefined, { signal }),
+  ask?: (version: string) => Promise<boolean>,
 ): { check(requested?: boolean): Promise<void>; restart(): void; dispose(): void } {
   let busy = false;
   let stage: UpdateFailureStage = 'check';
   const lifetime = new AbortController();
   let checkingAttempt = false;
   let checkError: Error | undefined;
+  const declined = new Set<string>();
+  let accepted = false;
   const reported = new WeakSet<Error>();
   const failure = (error: Error): void => {
     if (lifetime.signal.aborted) return;
@@ -97,6 +100,15 @@ export function createUpdateSession(
         }
         if (lifetime.signal.aborted) return;
         if (result?.isUpdateAvailable && (!stagedVersion || gt(result.updateInfo.version, stagedVersion))) {
+          const version = result.updateInfo.version;
+          if (ask) {
+            if (declined.has(version)) return;
+            accepted = await ask(version);
+            if (!accepted) {
+              declined.add(version);
+              return;
+            }
+          }
           stage = 'download';
           await updater.downloadUpdate();
         }
@@ -105,6 +117,10 @@ export function createUpdateSession(
       } finally {
         busy = false;
         if (!lifetime.signal.aborted) machine.checkFinished();
+        if (accepted && machine.canRestart()) {
+          accepted = false;
+          session.restart();
+        }
       }
     },
     restart(): void {
