@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { isInteractiveTarget } from '../shortcuts/isInteractiveTarget.js';
 import { useCanvasStore } from './store.js';
 
-/** Reports a Space hold to the toolbar (React Flow's `panActivationKeyCode` does the pan), and keeps typed spaces out of it. */
+/** Reports a Space or Ctrl hold to the toolbar (React Flow's `panActivationKeyCode` does the pan), and keeps typed spaces out of it. */
 export function useSpacePanHold(): void {
   useEffect(() => {
     const set = (isHeld: boolean): void => {
@@ -11,14 +11,24 @@ export function useSpacePanHold(): void {
     };
 
     const onKeyDown = (event: KeyboardEvent): void => {
-      if (event.code !== 'Space' || event.repeat) return;
+      if (event.repeat) return;
+      if (event.key === 'Control') {
+        if (!event.shiftKey && !event.metaKey && !event.altKey) set(true);
+        return;
+      }
+      // A Ctrl chord is a shortcut, not a pan.
+      if (event.ctrlKey) {
+        set(false);
+        return;
+      }
+      if (event.code !== 'Space') return;
       if (isInteractiveTarget(event.target)) return;
       set(true);
     };
 
     const onKeyUp = (event: KeyboardEvent): void => {
       // No interactive-target guard on the way up: a hold that started on the canvas releases after focus moved.
-      if (event.code === 'Space') set(false);
+      if (event.code === 'Space' || event.key === 'Control') set(false);
     };
 
     // On `document`: after the editor has the Space, before React Flow's `window` listener pans on it.

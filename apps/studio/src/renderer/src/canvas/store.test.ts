@@ -2259,6 +2259,36 @@ describe('a Space hold relayed from inside a frame (ONL-2577)', () => {
   });
 });
 
+describe('a held ⇧ preview', () => {
+  it('enters Interact while held and returns to Design on release', async () => {
+    await connect(docOf([browserNode('a')], 1));
+
+    useCanvasStore.getState().holdPreview(true);
+    expect(useCanvasStore.getState().mode).toBe('interact');
+
+    useCanvasStore.getState().holdPreview(false);
+    expect(useCanvasStore.getState().mode).toBe('design');
+  });
+
+  it('leaves a chosen Interact alone on release', async () => {
+    await connect(docOf([browserNode('a')], 1));
+
+    useCanvasStore.getState().setMode('interact');
+    useCanvasStore.getState().holdPreview(true);
+    useCanvasStore.getState().holdPreview(false);
+    expect(useCanvasStore.getState().mode).toBe('interact');
+  });
+
+  it('ends when the mode is picked during the hold', async () => {
+    await connect(docOf([browserNode('a')], 1));
+
+    useCanvasStore.getState().holdPreview(true);
+    useCanvasStore.getState().setMode('interact');
+    useCanvasStore.getState().holdPreview(false);
+    expect(useCanvasStore.getState().mode).toBe('interact');
+  });
+});
+
 describe('the picking mode', () => {
   it('arming needs no selection, forces the select tool, and pan/interact still disarm', async () => {
     await connect(docOf([browserNode('a'), browserNode('b', { order: 1 })], 2));

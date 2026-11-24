@@ -304,6 +304,9 @@ export function useFramePicker(
         case 'space-pan':
           useCanvasStore.getState().relaySpacePan(frameId, message.held);
           break;
+        case 'preview-hold':
+          useCanvasStore.getState().holdPreview(message.held);
+          break;
         case 'error':
           // Our code inside the frame threw. Main re-scrubs at its door.
           studio().telemetryException({ ...message.report, surface: 'frame-preload', mechanism: 'guest-handler' });

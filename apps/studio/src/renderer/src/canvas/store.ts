@@ -279,6 +279,8 @@ export interface CanvasState
   isSpacePanning: boolean;
   /** The frame whose guest relayed the standing hold; `null` is the host's own, whose keyup and blur still arrive (ONL-2577). */
   spacePanFrameId: string | null;
+  /** Interact entered by holding ⇧; its release returns to Design. */
+  isPreviewHeld: boolean;
 
   /** Held for the whole mount, never consumed: React Flow re-reads `fitView` on every change, so clearing it queues a fit that discards the camera. */
   restoredViewport: CanvasCamera | null;
@@ -312,6 +314,7 @@ export interface CanvasState
   /** That guest's document is gone, so its release can never arrive (ONL-2577). */
   releaseSpacePanFrom: (frameId: string) => void;
   setMode: (mode: CanvasMode) => void;
+  holdPreview: (held: boolean) => void;
   setLeftPanelView: (view: LeftPanelView) => void;
   /** Also ends a standing `chromeHidden`: from canvas-alone every rail toggle shows a rail. */
   toggleRail: (side: 'left' | 'right') => void;
@@ -503,6 +506,7 @@ const initialCanvasFields = () => ({
   inspiration: null,
   isSpacePanning: false,
   spacePanFrameId: null,
+  isPreviewHeld: false,
   ...initialImageFields(),
   ...initialTextFields(),
   ...initialElementPickingFields(),
@@ -571,6 +575,7 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
     // Selections and the inline bubble persist; FrameNode hides the bubble in Interact and Design restores it, draft included (ONL-2455).
     set((state) => ({
       mode,
+      isPreviewHeld: false,
       ...(mode === 'interact'
         ? {
             ...(state.mode === 'interact' ? {} : { previewRails: { left: false, right: false } }),
@@ -582,6 +587,17 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
           }
         : {}),
     }));
+  },
+
+  holdPreview: (held) => {
+    const state = get();
+    if (held) {
+      if (state.mode !== 'design') return;
+      state.setMode('interact');
+      set({ isPreviewHeld: true });
+      return;
+    }
+    if (state.isPreviewHeld) state.setMode('design');
   },
 
   setLeftPanelView: (view) => {
@@ -818,6 +834,7 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
       imageRefusal: null,
       isSpacePanning: false,
       spacePanFrameId: null,
+      isPreviewHeld: false,
       ...clearedDragVisuals(state),
       // Left set, it suppresses the next editor mount's fit.
       restoredViewport: null,
