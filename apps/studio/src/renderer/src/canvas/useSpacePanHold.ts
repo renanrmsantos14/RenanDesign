@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { isInteractiveTarget } from '../shortcuts/isInteractiveTarget.js';
 import { useCanvasStore } from './store.js';
 
-/** Reports a Space or Ctrl hold to the toolbar (React Flow's `panActivationKeyCode` does the pan), and keeps typed spaces out of it. */
+/** Reports a Space or Ctrl hold to the toolbar (React Flow pans on Space, `useCtrlDragPan` on Ctrl), and keeps typed spaces out of it. */
 export function useSpacePanHold(): void {
   useEffect(() => {
     const set = (isHeld: boolean): void => {

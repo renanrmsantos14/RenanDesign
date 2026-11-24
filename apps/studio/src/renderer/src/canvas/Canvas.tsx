@@ -83,6 +83,7 @@ import { dimensionBadgeNodeId, useCanvasStore, isChromeHidden } from './store.js
 import { isBlankWorkspace, useWorkspaceStore } from '../workspace/store.js';
 import { startControlShown } from './toolbarRunControl.js';
 import { useAppBeenUp } from './useAppBeenUp.js';
+import { useCtrlDragPan } from './useCtrlDragPan.js';
 import { usePreviewHold } from './usePreviewHold.js';
 import { useSpacePanHold } from './useSpacePanHold.js';
 import { useScrollKeyHold } from './frame/scrollKey.js';
@@ -305,8 +306,6 @@ function DimensionBadge({
   );
 }
 
-const PAN_KEYS = ['Space', 'Control'];
-
 const BADGE_GLYPH_BOX = 12;
 const BADGE_SECTION_GAP = 4;
 const BADGE_SECTION_PAD_BLOCK = 3;
@@ -458,6 +457,7 @@ export function Canvas({
     camera,
   });
   useCaptureReveal({ getViewport, setViewport });
+  useCtrlDragPan({ getViewport, setViewport });
   useCanvasServerBook(followServerPort);
   const { openImagePicker, ingestImages } = useCanvasFileDrop(screenToFlowPosition);
   const pasteFromMenu = useCanvasClipboard({ screenToFlowPosition, ingestImages });
@@ -789,7 +789,6 @@ export function Canvas({
         panOnScroll={!isZoomHeld}
         zoomOnScroll={isZoomHeld}
         zoomActivationKeyCode={null}
-        panActivationKeyCode={PAN_KEYS}
         /* Meta stays: this prop replaces React Flow's ⌘ default rather than adding to it (ONL-2043). */
         multiSelectionKeyCode={['Shift', 'Meta']}
         selectionKeyCode={selectionGesture.selectionKeyCode}

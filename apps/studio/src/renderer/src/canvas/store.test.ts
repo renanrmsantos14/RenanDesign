@@ -2279,6 +2279,19 @@ describe('a held ⇧ preview', () => {
     expect(useCanvasStore.getState().mode).toBe('interact');
   });
 
+  it('keeps the rails and restores the tool it started with', async () => {
+    await connect(docOf([browserNode('a')], 1));
+
+    useCanvasStore.getState().setTool('pan');
+    useCanvasStore.getState().toggleRail('left');
+    useCanvasStore.getState().holdPreview(true);
+    expect(isRailHidden(useCanvasStore.getState(), 'left')).toBe(true);
+    expect(isRailHidden(useCanvasStore.getState(), 'right')).toBe(false);
+
+    useCanvasStore.getState().holdPreview(false);
+    expect(useCanvasStore.getState().tool).toBe('pan');
+  });
+
   it('ends when the mode is picked during the hold', async () => {
     await connect(docOf([browserNode('a')], 1));
 
