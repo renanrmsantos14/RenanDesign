@@ -76,6 +76,7 @@ function replayedSession(answerPermission: (toolName: string) => 'allow' | 'deny
   });
   const session: AgentSession = new AgentSession({
     cwd: '/replay',
+    permissionMode: 'default',
     sessionId: 'replay',
     query: replayedQuery(TOOLS_TURN),
     onEvent: (event) => {

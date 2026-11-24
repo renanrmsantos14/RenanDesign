@@ -578,6 +578,10 @@ export class AgentSession {
       return { behavior: 'allow', updatedInput: input };
     }
 
+    if (this.permissionMode === 'auto' && toolName !== QUESTION_TOOL && destructiveClassOf(toolName, input) === undefined) {
+      return { behavior: 'allow', updatedInput: input };
+    }
+
     const { signal, toolUseID, requestId, agentID, suggestions } = opts;
 
     // The request routinely beats the assistant's `tool_use` block; announce now so the approval UI has a row.
@@ -754,7 +758,9 @@ export class AgentSession {
       input.tool_name ?? '',
       (input.tool_input as Record<string, unknown> | undefined) ?? {},
     );
-    if (found === undefined && !requiresShellApproval(input.tool_name ?? '')) return { continue: true };
+    if (found === undefined && (this.permissionMode === 'auto' || !requiresShellApproval(input.tool_name ?? ''))) {
+      return { continue: true };
+    }
 
     return {
       continue: true,
