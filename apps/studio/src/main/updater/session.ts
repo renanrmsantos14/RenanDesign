@@ -1,4 +1,4 @@
-import type { AppUpdater } from 'electron-updater';
+import type { AppUpdater, UpdateInfo } from 'electron-updater';
 import { isDiskFull } from '@studio/events';
 import { setTimeout as delay } from 'node:timers/promises';
 import { gt } from 'semver';
@@ -19,7 +19,7 @@ export function createUpdateSession(
   nativeUpdater?: NativeStageEmitter,
   report: typeof reportUpdateFailure = reportUpdateFailure,
   wait: (ms: number, signal: AbortSignal) => Promise<void> = (ms, signal) => delay(ms, undefined, { signal }),
-  ask?: (version: string) => Promise<boolean>,
+  ask?: (info: UpdateInfo) => Promise<boolean>,
 ): { check(requested?: boolean): Promise<void>; restart(): void; dispose(): void } {
   let busy = false;
   let stage: UpdateFailureStage = 'check';
@@ -103,7 +103,7 @@ export function createUpdateSession(
           const version = result.updateInfo.version;
           if (ask) {
             if (declined.has(version)) return;
-            accepted = await ask(version);
+            accepted = await ask(result.updateInfo);
             if (!accepted) {
               declined.add(version);
               return;

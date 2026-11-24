@@ -1,10 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import electron, { app, dialog } from 'electron';
-import { t } from '@studio/i18n';
+import electron, { app } from 'electron';
 import { handle, on } from '../ipc/bridge.js';
-import { IPC_EMIT, IPC_INVOKE, IPC_SEND, type UpdateState } from '@studio/events';
-import type { AppUpdater } from 'electron-updater';
+import { IPC_EMIT, IPC_INVOKE, IPC_SEND, parseReleaseNotes, type UpdateAnswer, type UpdateOffer, type UpdateState } from '@studio/events';
+import type { AppUpdater, UpdateInfo } from 'electron-updater';
 import { broadcastToRenderers } from '../tabs/broadcast.js';
 import { reportUpdateFailure } from './check.js';
 import { createUpdateSession } from './session.js';
@@ -81,6 +80,11 @@ export function registerUpdaterHandlers(): void {
   handle(IPC_INVOKE.updateStatus, (): UpdateState => machine.current());
   on(IPC_SEND.updateRestart, () => restartToUpdate());
   on(IPC_SEND.updateCheck, () => void checkForUpdatesNow());
+  handle(IPC_INVOKE.updateOffer, (): UpdateOffer | null => pending?.offer ?? null);
+  on(IPC_SEND.updateAnswer, (_event, answer: UpdateAnswer | undefined) => {
+    if (typeof answer?.version !== 'string' || typeof answer.accept !== 'boolean') return;
+    answerOffer(answer);
+  });
 }
 
 export function initAutoUpdater(): void {
@@ -172,24 +176,36 @@ async function wire(url: string): Promise<void> {
   void session.check();
 }
 
-async function askToUpdate(version: string): Promise<boolean> {
-  logger.info('asking to update', { version });
-  const options: Electron.MessageBoxOptions = {
-    title: t('app.name'),
-    type: 'info',
-    message: t('update.prompt.message', { version }),
-    detail: t('update.prompt.detail', { current: app.getVersion() }),
-    buttons: [t('update.prompt.now'), t('update.prompt.later')],
-    defaultId: 0,
-    cancelId: 1,
-  };
+let pending: { offer: UpdateOffer; resolve: (accept: boolean) => void } | undefined;
+
+function notesOf(info: UpdateInfo): string {
+  if (typeof info.releaseNotes === 'string') return info.releaseNotes;
+  return (info.releaseNotes ?? []).map((entry) => entry.note ?? '').join('\n');
+}
+
+/** Answered by the Tab's update dialog; every Tab shows the same offer, and the first answer settles it. */
+function askToUpdate(info: UpdateInfo): Promise<boolean> {
+  const offer: UpdateOffer = { version: info.version, current: app.getVersion(), notes: parseReleaseNotes(notesOf(info)) };
+  logger.info('asking to update', { version: offer.version, notes: offer.notes.length });
+  pending?.resolve(false);
   const parent = dialogParent();
   if (parent) {
     if (parent.isMinimized()) parent.restore();
     parent.focus();
   }
-  const { response } = parent ? await dialog.showMessageBox(parent, options) : await dialog.showMessageBox(options);
-  return response === 0;
+  return new Promise((resolve) => {
+    pending = { offer, resolve };
+    broadcastToRenderers(IPC_EMIT.updateOfferChanged, offer);
+  });
+}
+
+function answerOffer({ version, accept }: UpdateAnswer): void {
+  if (pending?.offer.version !== version) return;
+  const { resolve } = pending;
+  pending = undefined;
+  broadcastToRenderers(IPC_EMIT.updateOfferChanged, null);
+  logger.info('update answered', { version, accept });
+  resolve(accept);
 }
 
 export async function checkForUpdatesNow(): Promise<void> {

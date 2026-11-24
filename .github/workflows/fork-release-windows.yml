@@ -72,6 +72,9 @@ jobs:
             fi
           } > notes.md
           cat notes.md
+          # O diálogo de atualização do app lê estas linhas do feed.
+          { echo; echo 'releaseNotes: |'; sed 's/^/  /' notes.md; } >> out/latest.yml
+          cat out/latest.yml
       - name: Publish release
         shell: pwsh
         env:

@@ -3,8 +3,13 @@
   "update.move.detail": "RenanDesign is running from the disk image or Downloads, where it can't update itself. Your projects and settings come with it.",
   "update.move.move": "Move to Applications",
   "update.move.notNow": "Not Now",
-  "update.prompt.message": "RenanDesign {version} is available",
-  "update.prompt.detail": "You have {current}. Update now to download it and restart RenanDesign.",
+  "update.prompt.title": "A new version of RenanDesign is ready",
+  "update.prompt.versions": "Version {version} · you have {current}",
+  "update.prompt.feature": "New",
+  "update.prompt.fix": "Fixes",
+  "update.prompt.improvement": "Improvements",
+  "update.prompt.empty": "This version only has behind-the-scenes changes.",
+  "update.prompt.restartNote": "RenanDesign restarts when the download finishes.",
   "update.prompt.now": "Update Now",
   "update.prompt.later": "Later"
 }

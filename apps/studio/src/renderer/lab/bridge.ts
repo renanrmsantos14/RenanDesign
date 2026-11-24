@@ -252,6 +252,7 @@ const answers: Omit<StudioBridge, Inert> & Partial<Pick<StudioBridge, Inert>> = 
   onboardingComplete: async () => {},
 
   updateStatus: async () => IDLE_UPDATE_STATE,
+  updateOffer: async () => null,
 
   codexStatus: async () => IDLE_CODEX_SETUP_STATE,
   codexInstall: async () => ({ accepted: false }),

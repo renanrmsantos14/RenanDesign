@@ -29,6 +29,7 @@ import { primeArtifactListing } from './canvas/artifact/listing.js';
 import { ReportDialog } from './report/ReportDialog.js';
 import { SettingsDialog } from './settings/SettingsDialog.js';
 import { openSettings } from './settings/settingsDialogStore.js';
+import { UpdateOfferDialog } from './update/UpdateOfferDialog.js';
 import { primeSettings, useSettingsStore } from './settings/store.js';
 import { ConsentGate } from './telemetry/Consent.js';
 import { primeGitStatus, watchOpenWorktree } from './git-status/store.js';
@@ -351,6 +352,7 @@ export function Root(): React.JSX.Element {
       <ReportDialog />
       {/* Here, not in `App`: this returns the Projects Screen before `App` renders, so a mount there has no door on Projects. */}
       <SettingsDialog />
+      <UpdateOfferDialog />
       <VersionStamp />
     </>
   );
