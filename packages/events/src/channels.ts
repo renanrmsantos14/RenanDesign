@@ -123,7 +123,7 @@ import type { DebugAgentFrames, DebugAgentFramesRequest, DebugCaptureFrame, Debu
 import type { CaptureViewAnswer, CaptureViewRequest } from './capture-view.js';
 import type { CodexSetupState } from './codex.js';
 import type { ClaudeSetupState, ClaudeStatusRequest, SetupEntryPoint } from './claude-setup.js';
-import type { UpdateState } from './update.js';
+import type { UpdateAnswer, UpdateOffer, UpdateState } from './update.js';
 import type {
   BlankCreateResult,
   BlankCreateStage,
@@ -219,6 +219,7 @@ export const CHANNELS = {
     /** Await it: a failed write otherwise reappears as the flow at next launch. */
     onboardingComplete: { name: 'onboarding:complete', from: TAB, request: optional<OnboardingCompletion>(), response: of<void>(), tab: 'onboardingComplete' },
     updateStatus: { name: 'update:status', from: ANY, request: none, response: of<UpdateState>(), tab: 'updateStatus', chrome: 'updateStatus' },
+    updateOffer: { name: 'update:offer', from: TAB, request: none, response: of<UpdateOffer | null>(), tab: 'updateOffer' },
     codexStatus: { name: 'codex:status', from: TAB, request: none, response: of<CodexSetupState>(), tab: 'codexStatus' },
     /** Idempotent; a call while one runs joins it. Resolves on acceptance. */
     codexInstall: { name: 'codex:install', from: TAB, request: none, response: of<{ accepted: boolean }>(), tab: 'codexInstall' },
@@ -335,6 +336,7 @@ export const CHANNELS = {
     codeDirty: { name: 'code:dirty', from: TAB, request: one<CodeDirtyReport>(), tab: 'codeDirty' },
     updateRestart: { name: 'update:restart', from: ANY, request: none, tab: 'updateRestart', chrome: 'updateRestart' },
     updateCheck: { name: 'update:check', from: TAB, request: none, tab: 'updateCheck' },
+    updateAnswer: { name: 'update:answer', from: TAB, request: one<UpdateAnswer>(), tab: 'updateAnswer' },
     /** One of the application menu's own commands, asked for from the rail's logo menu (ONL-2563). */
     runAppCommand: { name: 'appCommands:run', from: ANY, request: one<AppCommandRequest>(), tab: 'runAppCommand', chrome: 'runAppCommand' },
     /** The app menu's Help row, forwarded by main to the active tab. */
@@ -410,6 +412,7 @@ export const CHANNELS = {
     /** Per write, as the agent makes it; the panel decides what a change means for each tab (ONL-2563). */
     codeWritten: { name: 'code:written', payload: of<CodeWrittenReport>(), tab: 'onCodeWritten' },
     updateState: { name: 'update:state', payload: of<UpdateState>(), tab: 'onUpdateState', chrome: 'onUpdateState' },
+    updateOfferChanged: { name: 'update:offer-changed', payload: of<UpdateOffer | null>(), tab: 'onUpdateOffer' },
     codexState: { name: 'codex:state', payload: of<CodexSetupState>(), tab: 'onCodexState' },
     claudeState: { name: 'claude:state', payload: of<ClaudeSetupState>(), tab: 'onClaudeState' },
     authChanged: { name: 'auth:changed', payload: of<StudioIdentity>(), tab: 'onAuthChanged' },

@@ -3,8 +3,13 @@
   "update.move.detail": "RenanDesign はディスクイメージか「ダウンロード」フォルダーから実行されているため、自動でアップデートできません。移動しても、プロジェクトと設定はそのまま使えます。",
   "update.move.move": "アプリケーションに移動",
   "update.move.notNow": "今はしない",
-  "update.prompt.message": "RenanDesign {version} が利用できます",
-  "update.prompt.detail": "現在のバージョンは {current} です。今すぐアップデートすると、ダウンロード後に RenanDesign が再起動します。",
+  "update.prompt.title": "RenanDesign の新しいバージョンがあります",
+  "update.prompt.versions": "バージョン {version}（現在は {current}）",
+  "update.prompt.feature": "新機能",
+  "update.prompt.fix": "修正",
+  "update.prompt.improvement": "改善",
+  "update.prompt.empty": "このバージョンには内部的な変更のみが含まれています。",
+  "update.prompt.restartNote": "ダウンロードが終わると RenanDesign が再起動します。",
   "update.prompt.now": "今すぐアップデート",
   "update.prompt.later": "あとで"
 }

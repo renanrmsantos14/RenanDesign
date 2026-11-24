@@ -209,6 +209,7 @@ export const RENDERER_LAYERS: Readonly<Record<string, Layer>> = {
   telemetry: 'features',
   tips: 'features',
   tour: 'features',
+  update: 'features',
 
   'App.tsx': 'entries',
   'Root.tsx': 'entries',

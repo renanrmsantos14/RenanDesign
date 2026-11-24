@@ -1,0 +1,42 @@
+.update-offer-content {
+  max-height: min(360px, 50vh);
+  overflow-y: auto;
+}
+
+.update-offer-heading {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.update-offer-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.update-offer-item {
+  position: relative;
+  padding-inline-start: var(--spacing-4);
+}
+
+.update-offer-item::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 4px;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-secondary);
+}
+
+.update-offer-item[data-kind='feature']::before {
+  background: var(--color-accent);
+}
+
+.update-offer-note {
+  min-width: 0;
+}

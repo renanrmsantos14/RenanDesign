@@ -324,7 +324,7 @@ describe('asking before an update', () => {
     const updater = new UpdateFixture();
     const asked: string[] = [];
     const machine = new UpdateMachine({ emit: () => undefined, waitForNativeStage: false });
-    const session = createUpdateSession(updater as unknown as AppUpdater, machine, undefined, () => undefined, undefined, async (version) => {
+    const session = createUpdateSession(updater as unknown as AppUpdater, machine, undefined, () => undefined, undefined, async ({ version }) => {
       asked.push(version);
       return answer;
     });
