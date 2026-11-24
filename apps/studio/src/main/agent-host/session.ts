@@ -578,6 +578,10 @@ export class AgentSession {
       return { behavior: 'allow', updatedInput: input };
     }
 
+    if (this.permissionMode === 'auto' && toolName !== QUESTION_TOOL) {
+      return { behavior: 'allow', updatedInput: input };
+    }
+
     const { signal, toolUseID, requestId, agentID, suggestions } = opts;
 
     // The request routinely beats the assistant's `tool_use` block; announce now so the approval UI has a row.
@@ -749,6 +753,7 @@ export class AgentSession {
         },
       };
     }
+    if (this.permissionMode === 'auto') return { continue: true };
     // Asking on a classifier fault is the safe side: no opinion would let the wrapped shapes no rule reaches through.
     const found = destructiveClassOf(
       input.tool_name ?? '',

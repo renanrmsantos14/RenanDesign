@@ -495,7 +495,7 @@ function makeSession(
     query: sdk.queryFn,
     ...(options.projectSetup === undefined ? {} : { projectSetup: options.projectSetup }),
     ...(options.onDeleteProjectFile === undefined ? {} : { onDeleteProjectFile: options.onDeleteProjectFile }),
-    ...(options.permissionMode === undefined ? {} : { permissionMode: options.permissionMode }),
+    permissionMode: options.permissionMode ?? 'default',
     ...(options.allowRules === undefined ? {} : { allowRules: options.allowRules }),
     onAllowRules: (rules) => granted.push(rules),
     onEvent: (event) => {
@@ -1230,8 +1230,8 @@ describe('permission posture (ONL-2285, ONL-2190)', () => {
       .toEqual({ continue: true });
   });
 
-  it('asks in every mode the backend offers, because the hook runs before the mode does', async () => {
-    for (const mode of CLAUDE_PERMISSION_MODES) {
+  it('asks in every mode but auto, because the hook runs before the mode does', async () => {
+    for (const mode of CLAUDE_PERMISSION_MODES.filter((m) => m !== 'auto')) {
       const { sdk } = open({ permissionMode: mode });
       expect(
         await sdk.preToolUse({ tool_name: 'Bash', tool_input: { command: 'git push --force' } }),
@@ -1301,8 +1301,8 @@ describe('permission posture (ONL-2285, ONL-2190)', () => {
 });
 
 describe('Windows shell approval', () => {
-  it('asks before every PowerShell script in every permission mode', async () => {
-    for (const permissionMode of CLAUDE_PERMISSION_MODES) {
+  it('asks before every PowerShell script in every permission mode but auto', async () => {
+    for (const permissionMode of CLAUDE_PERMISSION_MODES.filter((mode) => mode !== 'auto')) {
       const { sdk } = open({ permissionMode });
       for (const command of ['git push --force', 'git branch -D topic', 'git reset --hard', 'gh pr create', 'pwsh -EncodedCommand Z2l0', 'Get-ChildItem']) {
         expect(await sdk.preToolUse({ tool_name: 'PowerShell', tool_input: { command } })).toMatchObject({
@@ -1310,6 +1310,19 @@ describe('Windows shell approval', () => {
         });
       }
     }
+  });
+
+  it('runs every command in auto mode without a card, destructive ones included', async () => {
+    const { sdk, emitted } = open({ permissionMode: 'auto' });
+    expect(await sdk.preToolUse({ tool_name: 'PowerShell', tool_input: { command: 'Get-ChildItem' } })).toEqual({ continue: true });
+    expect(await sdk.canUseTool('PowerShell', { command: 'Get-ChildItem' }, {
+      signal: new AbortController().signal, toolUseID: 'toolu_auto', requestId: 'req_auto',
+    })).toMatchObject({ behavior: 'allow' });
+    expect(ofType(emitted, 'permission.requested')).toEqual([]);
+    expect(await sdk.preToolUse({ tool_name: 'Bash', tool_input: { command: 'git reset --hard' } })).toEqual({ continue: true });
+    expect(await sdk.canUseTool('Bash', { command: 'git push --force' }, {
+      signal: new AbortController().signal, toolUseID: 'toolu_force', requestId: 'req_force',
+    })).toMatchObject({ behavior: 'allow' });
   });
 
   it('never grants persistent PowerShell access and a denial does not execute the tool', async () => {
@@ -1598,7 +1611,7 @@ describe('an always-allow that keeps its word (ONL-2933)', () => {
 
 describe('the permission mode the composer is shown (ONL-2190)', () => {
   it('publishes the mode Studio passed and the set it enforces, not what the CLI reports', async () => {
-    const { sdk, emitted } = open();
+    const { sdk, emitted } = open({ permissionMode: 'auto' });
     const published = ofType(emitted, 'session.settings').find(
       (e) => e.permissionModes !== undefined,
     );
@@ -1642,7 +1655,7 @@ describe('the permission mode the composer is shown (ONL-2190)', () => {
     await drain();
 
     expect(await session.setPermissionMode('plan')).toBe(false);
-    expect(foldSessionState(emitted).permissionMode).toBe('auto');
+    expect(foldSessionState(emitted).permissionMode).toBe('default');
   });
 });
 
