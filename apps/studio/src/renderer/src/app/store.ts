@@ -4,11 +4,12 @@ import { studio } from '../bridge.js';
 
 interface AppInfoStore {
   version: string | undefined;
+  builtAt: string | undefined;
   tipsEveryProject: boolean;
   tipMomentGapMs: number | undefined;
 }
 
-const useAppInfoStore = create<AppInfoStore>()(() => ({ version: undefined, tipsEveryProject: false, tipMomentGapMs: undefined }));
+const useAppInfoStore = create<AppInfoStore>()(() => ({ version: undefined, builtAt: undefined, tipsEveryProject: false, tipMomentGapMs: undefined }));
 
 let priming: Promise<void> | undefined;
 
@@ -17,7 +18,7 @@ export function primeAppInfo(): Promise<void> {
     const info = await studio()
       .appInfo()
       .catch((): AppInfo | undefined => undefined);
-    if (info !== undefined) useAppInfoStore.setState({ version: info.version, tipsEveryProject: info.tipsEveryProject === true, tipMomentGapMs: info.tipMomentGapMs });
+    if (info !== undefined) useAppInfoStore.setState({ version: info.version, builtAt: info.builtAt, tipsEveryProject: info.tipsEveryProject === true, tipMomentGapMs: info.tipMomentGapMs });
   })();
   return priming;
 }

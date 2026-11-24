@@ -102,6 +102,8 @@ function studioConfig(options: StudioConfigOptions, env: Record<string, string |
       __COMMIT_SHA__: JSON.stringify(commitSha()),
       'import.meta.env.MAIN_VITE_TELEMETRY': JSON.stringify(String(telemetry)),
       __OFFICIAL_BUILD__: JSON.stringify(cloud),
+      __SELF_UPDATE__: JSON.stringify(Boolean(env['STUDIO_UPDATE_FEED'])),
+      __BUILT_AT__: JSON.stringify(new Date().toISOString()),
       'import.meta.env.MAIN_VITE_FLAG_DEFAULTS': JSON.stringify(flagDefaults.join(',')),
       'import.meta.env.MAIN_VITE_CLOUD_BUILD': JSON.stringify(cloud ? commitCount(envDir) : 0),
       'import.meta.env.MAIN_VITE_ONLOOK_CLOUD': JSON.stringify(String(cloud)),

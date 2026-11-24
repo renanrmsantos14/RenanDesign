@@ -27,6 +27,7 @@ jobs:
       # Build de fork sem certificado: scripts/windows-signing.ts exige este opt-in.
       ONLOOK_WINDOWS_ALLOW_UNSIGNED: '1'
       CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+      STUDIO_UPDATE_FEED: https://github.com/renanrmsantos14/RenanDesign/releases/latest/download/
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
