@@ -279,8 +279,8 @@ export interface CanvasState
   isSpacePanning: boolean;
   /** The frame whose guest relayed the standing hold; `null` is the host's own, whose keyup and blur still arrive (ONL-2577). */
   spacePanFrameId: string | null;
-  /** Interact entered by holding ⇧; its release returns to Design. */
-  isPreviewHeld: boolean;
+  /** The Design tool to restore when a ⇧ hold into Interact ends; null when no hold is on. */
+  previewHeldTool: CanvasTool | null;
 
   /** Held for the whole mount, never consumed: React Flow re-reads `fitView` on every change, so clearing it queues a fit that discards the camera. */
   restoredViewport: CanvasCamera | null;
@@ -506,7 +506,7 @@ const initialCanvasFields = () => ({
   inspiration: null,
   isSpacePanning: false,
   spacePanFrameId: null,
-  isPreviewHeld: false,
+  previewHeldTool: null,
   ...initialImageFields(),
   ...initialTextFields(),
   ...initialElementPickingFields(),
@@ -575,7 +575,7 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
     // Selections and the inline bubble persist; FrameNode hides the bubble in Interact and Design restores it, draft included (ONL-2455).
     set((state) => ({
       mode,
-      isPreviewHeld: false,
+      previewHeldTool: null,
       ...(mode === 'interact'
         ? {
             ...(state.mode === 'interact' ? {} : { previewRails: { left: false, right: false } }),
@@ -593,11 +593,16 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
     const state = get();
     if (held) {
       if (state.mode !== 'design') return;
+      const { tool, hiddenRails } = state;
       state.setMode('interact');
-      set({ isPreviewHeld: true });
+      // A held peek keeps the rails as they were: hiding them resizes every Frame on each press.
+      set({ previewHeldTool: tool, previewRails: { left: !hiddenRails.left, right: !hiddenRails.right } });
       return;
     }
-    if (state.isPreviewHeld) state.setMode('design');
+    const tool = state.previewHeldTool;
+    if (tool === null) return;
+    state.setMode('design');
+    get().setTool(tool);
   },
 
   setLeftPanelView: (view) => {
@@ -834,7 +839,7 @@ export const useCanvasStore = create<CanvasState>()((set, get, api) => ({
       imageRefusal: null,
       isSpacePanning: false,
       spacePanFrameId: null,
-      isPreviewHeld: false,
+      previewHeldTool: null,
       ...clearedDragVisuals(state),
       // Left set, it suppresses the next editor mount's fit.
       restoredViewport: null,
