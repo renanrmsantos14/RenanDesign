@@ -2,4 +2,4 @@
 "@studio/app": patch
 ---
 
-In Auto mode the agent runs commands and edits without asking for approval, including shell commands on Windows. Force push, branch delete and hard reset still ask.
+In Auto mode the agent runs every command and edit without asking for approval, shell commands on Windows and destructive git actions included. Its questions to you still show.

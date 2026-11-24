@@ -578,7 +578,7 @@ export class AgentSession {
       return { behavior: 'allow', updatedInput: input };
     }
 
-    if (this.permissionMode === 'auto' && toolName !== QUESTION_TOOL && destructiveClassOf(toolName, input) === undefined) {
+    if (this.permissionMode === 'auto' && toolName !== QUESTION_TOOL) {
       return { behavior: 'allow', updatedInput: input };
     }
 
@@ -753,14 +753,13 @@ export class AgentSession {
         },
       };
     }
+    if (this.permissionMode === 'auto') return { continue: true };
     // Asking on a classifier fault is the safe side: no opinion would let the wrapped shapes no rule reaches through.
     const found = destructiveClassOf(
       input.tool_name ?? '',
       (input.tool_input as Record<string, unknown> | undefined) ?? {},
     );
-    if (found === undefined && (this.permissionMode === 'auto' || !requiresShellApproval(input.tool_name ?? ''))) {
-      return { continue: true };
-    }
+    if (found === undefined && !requiresShellApproval(input.tool_name ?? '')) return { continue: true };
 
     return {
       continue: true,
