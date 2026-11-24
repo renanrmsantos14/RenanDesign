@@ -145,7 +145,7 @@ describe('autoInstall — a failed install is still a resolved promise', () => {
     }));
     expect(outcome).toEqual({
       outcome: 'failed', manager: 'bun',
-      detail: 'Onlook couldn’t find bun. Install it or make it available in your shell, then click Retry. You can keep working in chat.',
+      detail: 'RenanDesign couldn’t find bun. Install it or make it available in your shell, then click Retry. You can keep working in chat.',
     });
   });
   it('returns rather than rejecting when the install fails', async () => {

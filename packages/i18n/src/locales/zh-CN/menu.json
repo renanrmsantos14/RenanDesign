@@ -35,6 +35,6 @@
   "menu.update.unavailable": "暂时无法更新",
   "menu.update.restart": "重新启动以更新",
   "menu.update.restartVersion": "重新启动以更新（{version}）",
-  "menu.resetStudio": "重置 Onlook…",
+  "menu.resetStudio": "重置 RenanDesign…",
   "menu.taskManager": "任务管理器…"
 }

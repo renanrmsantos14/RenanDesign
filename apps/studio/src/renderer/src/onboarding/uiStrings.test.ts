@@ -12,10 +12,10 @@ describe('onboardingUiStrings', () => {
 });
 
 describe('bundled Claude recovery (ONL-2671)', () => {
-  test('Project Chat directs users to replace Onlook and reopen it, not install Claude Code', () => {
+  test('Project Chat directs users to replace RenanDesign and reopen it, not install Claude Code', () => {
     expect(t('chat.connection.missing.title')).toBe('Claude couldn’t start');
     expect(t('chat.connection.missing.body')).toBe(
-      'Claude comes with Onlook. Download Onlook again and replace your installed copy, then reopen it. If Claude still won’t start, contact support.',
+      'Claude comes with RenanDesign. Download RenanDesign again and replace your installed copy, then reopen it. If Claude still won’t start, contact support.',
     );
   });
 

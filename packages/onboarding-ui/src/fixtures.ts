@@ -53,32 +53,32 @@ export const STUB_STRINGS: OnboardingUiStrings = {
       connected: 'Signed in as {email}',
       'setup-failed': 'Setting up the ChatGPT agent did not finish',
       'wont-start': 'The ChatGPT agent downloaded but will not start',
-      'out-of-date': 'The ChatGPT agent on this computer is older than Onlook needs',
+      'out-of-date': 'The ChatGPT agent on this computer is older than RenanDesign needs',
       fallback: 'Finish signing in from the Terminal',
     },
   },
   dialogBody: {
     claude: {
-      'not-signed-in': 'Onlook opens claude.com in your browser.',
-      checking: 'Onlook is sending Claude one short message to make sure it answers.',
+      'not-signed-in': 'RenanDesign opens claude.com in your browser.',
+      checking: 'RenanDesign is sending Claude one short message to make sure it answers.',
       'signing-in': 'We are waiting for it. Come back when the page says you are done.',
       'paste-code': 'Paste it here and you are done.',
       'signed-in': '{plan}',
-      'cannot-connect': 'Onlook sent Claude a short message and it did not go through.',
+      'cannot-connect': 'RenanDesign sent Claude a short message and it did not go through.',
       fallback:
         'Copy the line below, paste it into Terminal, and press Return. Come back here when Claude says you are signed in.',
     },
     codex: {
-      'not-set-up': 'Onlook installs its own copy of the ChatGPT agent. Nothing else on your machine changes.',
+      'not-set-up': 'RenanDesign installs its own copy of the ChatGPT agent. Nothing else on your machine changes.',
       downloading: 'About 111 MB. It only takes about 30 seconds.',
-      checking: 'Onlook is checking the agent answers and that this computer is signed in.',
+      checking: 'RenanDesign is checking the agent answers and that this computer is signed in.',
       'not-signed-in':
-        'Onlook opens chatgpt.com in your browser. This replaces any other OpenAI credentials saved on this computer.',
+        'RenanDesign opens chatgpt.com in your browser. This replaces any other OpenAI credentials saved on this computer.',
       'signing-in': 'This closes on its own once you’ve signed in.',
       connected: '{plan}',
       'setup-failed': 'It can be picked up from where it stopped.',
       'wont-start': 'Downloading a fresh copy usually fixes it.',
-      'out-of-date': 'It runs, but Onlook drives a newer version. The download is the current one.',
+      'out-of-date': 'It runs, but RenanDesign drives a newer version. The download is the current one.',
       fallback:
         'Copy the line below, paste it into Terminal, and press Return. Come back here when ChatGPT says you are signed in.',
     },
@@ -104,8 +104,8 @@ export const STUB_STRINGS: OnboardingUiStrings = {
   comingSoon: 'Coming soon',
   comingSoonName: { opencode: 'OpenCode', other: 'Other AI providers' },
   chatLine: {
-    claude: 'Please sign in to Claude to continue designing in Onlook',
-    codex: 'Please sign in to ChatGPT to continue designing in Onlook',
+    claude: 'Please sign in to Claude to continue designing in RenanDesign',
+    codex: 'Please sign in to ChatGPT to continue designing in RenanDesign',
   },
   chatSignedIn: 'Signed in as {email}',
   mark: { attention: 'Needs you', connected: 'Connected' },
@@ -120,13 +120,13 @@ export const STUB_STRINGS: OnboardingUiStrings = {
     label: { claude: 'Use Claude instead', codex: 'Use ChatGPT instead' },
     needs: {
       claude: 'Needs a Claude Pro or Max plan. You sign in once in your browser.',
-      codex: 'Needs a ChatGPT plan. Onlook downloads its agent and you sign in.',
+      codex: 'Needs a ChatGPT plan. RenanDesign downloads its agent and you sign in.',
     },
     ready: { claude: 'Claude is set up on this Mac.', codex: 'ChatGPT is set up on this Mac.' },
     setUp: 'Set up',
     use: 'Use',
   },
-  runtimeMissingBody: 'Claude comes with Onlook. Download Onlook again and replace your installed copy, then reopen it. If Claude still won’t start, contact support.',
+  runtimeMissingBody: 'Claude comes with RenanDesign. Download RenanDesign again and replace your installed copy, then reopen it. If Claude still won’t start, contact support.',
 };
 
 export const FIXTURE_EMAIL = 'wren@example.com';
@@ -138,7 +138,7 @@ export const CODEX_COMMAND = 'codex login --device-auth';
 export const CODEX_DETAIL = {
   'setup-failed': "the ChatGPT agent's credentials were refused: insufficient_quota",
   'wont-start': 'the ChatGPT agent exited before the handshake completed (exit 1)',
-  'out-of-date': 'This ChatGPT agent is 0.140.0; Onlook needs 0.147.0 or newer',
+  'out-of-date': 'This ChatGPT agent is 0.140.0; RenanDesign needs 0.147.0 or newer',
 } as const;
 
 export const CLAUDE_DETAIL = {

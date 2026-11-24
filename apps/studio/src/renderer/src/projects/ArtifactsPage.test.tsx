@@ -40,5 +40,5 @@ it('keeps unavailable/loading distinct from empty and newer-reader actions disab
   const buttons = [...newer.matchAll(/<button\b[^>]*>/g)].map((match) => match[0]);
   expect(buttons.find((button) => button.includes('aria-label="Artifact options"'))).toBeUndefined();
   expect(buttons.find((button) => button.includes('aria-label="Rename artifact"'))).toContain('disabled=""');
-  expect(newer).toContain('Made in a newer Onlook version');
+  expect(newer).toContain('Made in a newer RenanDesign version');
 });

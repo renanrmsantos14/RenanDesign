@@ -933,7 +933,7 @@ describe('the stages inside the project failing (ONL-2179)', () => {
 
     const failed = expectKind(state, 'failed');
     expect(failed.phase).toBe('starting');
-    expect(failed.detail).toBe('The Onlook Agent ran into an error while starting your app.');
+    expect(failed.detail).toBe('The RenanDesign Agent ran into an error while starting your app.');
     expect(failed.workspace).toBeDefined();
     expect(recorder.framed).toEqual([]);
     expect(recorder.calls).not.toContain('awaitRunning');
@@ -949,7 +949,7 @@ describe('the stages inside the project failing (ONL-2179)', () => {
 
     const failed = expectKind(state, 'failed');
     expect(failed.phase).toBe('starting');
-    expect(failed.detail).toBe('The Onlook Agent stopped before your app started.');
+    expect(failed.detail).toBe('The RenanDesign Agent stopped before your app started.');
     expect(failed.workspace).toBeDefined();
     expect(recorder.framed).toEqual([]);
     expect(recorder.calls).not.toContain('awaitRunning');

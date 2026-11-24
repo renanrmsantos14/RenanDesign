@@ -84,7 +84,7 @@ test('main and renderer catalogs of the default config name the source edition a
     const code = output.output.find((chunk) => chunk.type === 'chunk');
     if (!code || code.type !== 'chunk') throw new Error('Catalog bundle missing');
     const catalog = await import(`data:text/javascript;base64,${Buffer.from(code.code).toString('base64')}`) as { t: (key: string) => string };
-    const name = 'Onlook Source';
+    const name = 'RenanDesign';
     expect(catalog.t('app.name')).toBe(name);
     expect(catalog.t('menu.about')).toBe(`About ${name}`);
     expect(catalog.t('menu.hide')).toBe(`Hide ${name}`);

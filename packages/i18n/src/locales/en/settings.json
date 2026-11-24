@@ -11,7 +11,7 @@
   "settings.experimental": "Experimental",
   "settings.analytics.title": "Analytics",
   "settings.analytics.label": "Share analytics",
-  "settings.analytics.description": "Help improve Onlook by sharing usage data, session recordings, and diagnostic logs.",
+  "settings.analytics.description": "Help improve RenanDesign by sharing usage data, session recordings, and diagnostic logs.",
   "settings.analytics.saveFailed": "Couldn’t save. Try again.",
   "settings.tips.title": "Tips",
   "settings.tips.label": "Show tips again",

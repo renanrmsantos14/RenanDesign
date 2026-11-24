@@ -18,7 +18,7 @@ const { channel, version: requestedVersion } = releaseOptions(args, true);
 if (process.platform !== 'win32' || process.arch !== 'x64') throw new Error('Build Windows x64 on a Windows x64 runner');
 const manifest = JSON.parse(readFileSync(join(app, 'package.json'), 'utf8')) as { version: string; productName: string };
 const officialBuild = process.env['STUDIO_CLOUD_BUILD'] === '1';
-const productName = officialBuild ? manifest.productName : 'Onlook Source';
+const productName = officialBuild ? manifest.productName : 'RenanDesign';
 const version = requestedVersion ?? (channel === undefined ? manifest.version : stamp(manifest.version, commitCount(root), channel));
 const signing = windowsSigning(process.env);
 const sdkRequire = createRequire(createRequire(join(app, 'package.json')).resolve('@anthropic-ai/claude-agent-sdk'));

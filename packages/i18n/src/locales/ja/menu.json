@@ -35,6 +35,6 @@
   "menu.update.unavailable": "アップデートを利用できません",
   "menu.update.restart": "再起動してアップデート",
   "menu.update.restartVersion": "再起動してアップデート ({version})",
-  "menu.resetStudio": "Onlook をリセット…",
+  "menu.resetStudio": "RenanDesign をリセット…",
   "menu.taskManager": "タスクマネージャー…"
 }

@@ -61,7 +61,7 @@ test('unfocused work creates one silent native notification and click selects it
   observeNotificationEvent(event);
   const notification = MockNotification.instances[0]!;
   expect(MockNotification.instances).toHaveLength(1);
-  expect(notification.options).toMatchObject({ title: 'Onlook', body: 'Project A finished', silent: true });
+  expect(notification.options).toMatchObject({ title: 'RenanDesign', body: 'Project A finished', silent: true });
   notification.emit('show');
   expect(notificationSettings().delivery).toBe('delivered');
   notification.emit('click');

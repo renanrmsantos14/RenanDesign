@@ -45,9 +45,9 @@ test('the main and renderer catalogs of a cloud edition created around a handed 
     const code = output.output.find((chunk) => chunk.type === 'chunk');
     if (!code || code.type !== 'chunk') throw new Error('Catalog bundle missing');
     const catalog = await import(`data:text/javascript;base64,${Buffer.from(code.code).toString('base64')}`) as { t: (key: string) => string };
-    expect(catalog.t('app.name')).toBe('Onlook');
-    expect(catalog.t('menu.about')).toBe('About Onlook');
-    expect(catalog.t('menu.quit')).toBe('Quit Onlook');
+    expect(catalog.t('app.name')).toBe('RenanDesign');
+    expect(catalog.t('menu.about')).toBe('About RenanDesign');
+    expect(catalog.t('menu.quit')).toBe('Quit RenanDesign');
     expect(code.code).toContain('Sign in to Onlook');
   }
 });

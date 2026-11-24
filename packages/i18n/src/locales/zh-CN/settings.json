@@ -11,7 +11,7 @@
   "settings.experimental": "实验性功能",
   "settings.analytics.title": "分析",
   "settings.analytics.label": "分享分析数据",
-  "settings.analytics.description": "分享使用数据、会话录制和诊断日志，帮助改进 Onlook。",
+  "settings.analytics.description": "分享使用数据、会话录制和诊断日志，帮助改进 RenanDesign。",
   "settings.analytics.saveFailed": "未能保存，请重试。",
   "settings.tips.title": "提示",
   "settings.tips.label": "重新显示提示",

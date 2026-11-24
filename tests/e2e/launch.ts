@@ -122,7 +122,7 @@ export function panelResizeState(page: Page) {
 const { productName: officialProductName } = JSON.parse(readFileSync(join(appDir, 'package.json'), 'utf8')) as {
   productName: string;
 };
-const productName = process.env['STUDIO_CLOUD_BUILD'] === '1' ? officialProductName : 'Onlook Source';
+const productName = process.env['STUDIO_CLOUD_BUILD'] === '1' ? officialProductName : 'RenanDesign';
 const PACKAGED_APP = packagedAppPath(join(repoRoot, 'release'), productName, process.arch === 'x64' ? 'x64' : 'arm64');
 const PACKAGED_BIN = process.platform === 'win32'
   ? join(repoRoot, 'release/win-unpacked', `${productName}.exe`)
@@ -191,7 +191,7 @@ export async function launchStudio(
   if (launch.shim) claudeShims.set(app, launch.shim);
   // Closing before the first window loads segfaults the browser process (ONL-1820); `firstWindow()` may resolve the band, not the tab.
   const page = await editorPage(app);
-  const source = await app.evaluate(({ app }) => app.getName() === 'Onlook Source');
+  const source = await app.evaluate(({ app }) => app.getName() === 'RenanDesign');
   const instrument = ['STUDIO_SHOWROOM', 'STUDIO_ONBOARDING', 'STUDIO_PROJECTS', 'STUDIO_CHAT_FIXTURE', 'STUDIO_DIAGNOSTICS'].some((key) => Boolean(extraEnv[key]));
   if (source && !instrument && options.analyticsConsent !== 'ask' && options.telemetryConsent !== 'unanswered' && await page.evaluate(() => window.studio.telemetryConsent()) === null) {
     await page.getByTestId('telemetry-decline').click();

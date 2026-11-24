@@ -1,6 +1,6 @@
 extends: ./electron-builder.yml
-appId: com.onlook.studio
-productName: Onlook
+appId: com.renan.renandesign
+productName: RenanDesign
 protocols:
   - name: Onlook attribution
     schemes: [onlook]

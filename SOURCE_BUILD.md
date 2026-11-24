@@ -1,6 +1,6 @@
-# Build Onlook Source on a Mac
+# Build RenanDesign on a Mac
 
-Onlook Source runs locally without an Onlook account, email address, cloud keys or `.env` file. To chat, connect your own Claude Code or Codex account during setup. Those providers have their own account and subscription requirements.
+RenanDesign runs locally without an Onlook account, email address, cloud keys or `.env` file. To chat, connect your own Claude Code or Codex account during setup. Those providers have their own account and subscription requirements.
 
 ## Prerequisites
 
@@ -39,22 +39,22 @@ On first launch, choose whether to share usage data. Either choice continues to 
 bun run build:dmg
 ```
 
-This builds both Mac architectures and creates `Onlook Source` apps, DMGs and ZIPs under `release/`. It needs no Onlook signing credentials. Without a Developer ID, the result is for your own Mac, not a trusted download for other people. To build app bundles without installers, use `bun run build:dmg --dir`.
+This builds both Mac architectures and creates `RenanDesign` apps, DMGs and ZIPs under `release/`. It needs no Onlook signing credentials. Without a Developer ID, the result is for your own Mac, not a trusted download for other people. To build app bundles without installers, use `bun run build:dmg --dir`.
 
 Open the app matching your Mac:
 
 ```sh
 # Apple silicon
-open 'release/mac-arm64/Onlook Source.app'
+open 'release/mac-arm64/RenanDesign.app'
 # Intel
-open 'release/mac/Onlook Source.app'
+open 'release/mac/RenanDesign.app'
 ```
 
 If macOS blocks an unsigned app you built, follow macOS’s Privacy & Security guidance. Don’t disable Gatekeeper globally.
 
 ## Separate from official Onlook
 
-Onlook Source uses bundle ID `com.onlook.studio.source` and stores its data in `~/Library/Application Support/Onlook Studio Source`. It doesn’t read official Onlook’s data or install its updates. To update your source build, pull the repository, install dependencies again, and rebuild.
+RenanDesign uses bundle ID `com.renan.renandesign.source` and stores its data in `~/Library/Application Support/Onlook Studio Source`. It doesn’t read official Onlook’s data or install its updates. To update your source build, pull the repository, install dependencies again, and rebuild.
 
 Official builds use a separate cloud build configuration, which adds sign-in, cloud services and updates. Signing or packaging a source build doesn't make it an official build.
 

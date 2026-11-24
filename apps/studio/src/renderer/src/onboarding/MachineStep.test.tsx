@@ -60,21 +60,21 @@ test('every check starts at once, and nothing blocks Continue while they run', a
 test('all four ready reads as four ticks, and Continue lights up', async () => {
   const view = await render(state({ snapshot: { checks: MACHINE_CHECK_IDS.map((id) => ({ id, status: 'passed' })), platform: 'mac', canChooseFolder: true } }));
   expect(view.querySelectorAll('[data-phase="ready"]')).toHaveLength(4);
-  expect(view.textContent).toContain('Where Onlook saves the projects you make.');
+  expect(view.textContent).toContain('Where RenanDesign saves the projects you make.');
   expect(view.querySelector<HTMLButtonElement>('[data-testid="onboarding-continue"]')?.disabled).toBe(false);
 });
 
-test('Onlook installs the developer tools, and you choose the folder', async () => {
+test('RenanDesign installs the developer tools, and you choose the folder', async () => {
   const view = await render(state({ snapshot: {
     checks: [{ id: 'git', status: 'failed', cause: 'developer_tools_missing' }, { id: 'workspace', status: 'failed', cause: 'workspace_not_writable' }],
     platform: 'mac', canChooseFolder: true } }));
-  expect(view.querySelector('[data-testid="machine-check-git"]')?.textContent).toContain('Not on your Mac yet. Onlook can install them.');
+  expect(view.querySelector('[data-testid="machine-check-git"]')?.textContent).toContain('Not on your Mac yet. RenanDesign can install them.');
   expect(view.querySelector('[data-testid="machine-action-git"]')?.textContent).toContain('Install');
   expect(view.querySelector('[data-testid="machine-action-workspace"]')?.textContent).toContain('Choose folder');
   expect(view.querySelector<HTMLButtonElement>('[data-testid="onboarding-continue"]')?.disabled).toBe(true);
 });
 
-test('a row Onlook is acting on shows what it is doing, and offers nothing to press', async () => {
+test('a row RenanDesign is acting on shows what it is doing, and offers nothing to press', async () => {
   const installing = await render(state({
     snapshot: { checks: [{ id: 'git', status: 'failed', cause: 'developer_tools_missing' }], platform: 'mac', canChooseFolder: true },
     action: { id: 'git', kind: 'install', token: 1 },
@@ -85,7 +85,7 @@ test('a row Onlook is acting on shows what it is doing, and offers nothing to pr
   expect(row?.querySelectorAll('button')).toHaveLength(0);
 });
 
-test('while Onlook is acting, no other row can take the floor from it', async () => {
+test('while RenanDesign is acting, no other row can take the floor from it', async () => {
   const view = await render(state({
     snapshot: { checks: [
       { id: 'git', status: 'failed', cause: 'developer_tools_missing' },
@@ -110,7 +110,7 @@ test('an install that did not finish turns the row over to the person', async ()
   expect(view.querySelector('[data-testid="machine-action-git"]')?.textContent).toContain('Fix');
 });
 
-test('a check Onlook cannot fix offers Fix, never a verb it cannot perform', async () => {
+test('a check RenanDesign cannot fix offers Fix, never a verb it cannot perform', async () => {
   const view = await render(state({ snapshot: {
     checks: [{ id: 'port', status: 'failed', cause: 'no_free_port' }, { id: 'helper', status: 'failed', cause: 'helper_failed' }],
     platform: 'mac', canChooseFolder: true } }));
@@ -150,7 +150,7 @@ test('Fix opens that one check on its own, with its prompt and its link', async 
   }));
   const detail = view.querySelector('[data-testid="machine-detail"]');
   expect(detail?.textContent).toContain('Another app is using the preview ports');
-  expect(detail?.textContent).toContain('Onlook shows your app on a port between 4700 and 4799');
+  expect(detail?.textContent).toContain('RenanDesign shows your app on a port between 4700 and 4799');
   expect(detail?.textContent).toContain('Something on my computer is using every port from 4700 to 4799 on 127.0.0.1.');
   expect(view.querySelector('[data-testid="machine-help"]')?.textContent).toContain('Open Activity Monitor');
   expect(view.querySelector('[data-testid="machine-check-again"]')?.textContent).toContain('Check again');

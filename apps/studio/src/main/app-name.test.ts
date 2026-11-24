@@ -20,34 +20,34 @@ describe('the Safe Storage application name', () => {
     expect(startup).toContain("app.setPath('userData', pinnedUserData)");
   });
 
-  it('names the tabbed native window Onlook independently of the Safe Storage namespace', () => {
+  it('names the tabbed native window RenanDesign independently of the Safe Storage namespace', () => {
     const window = readFileSync(new URL('./tabs/window.ts', import.meta.url), 'utf8');
     const options = window.match(/new BaseWindow\(\{([\s\S]*?)\n    \}\)/)?.[1];
     expect(options).toBeDefined();
     expect(options).toContain("title: t('app.name')");
-    expect(t('app.name')).toBe('Onlook');
+    expect(t('app.name')).toBe('RenanDesign');
   });
 
-  it('keeps the application menu and native role labels named Onlook', () => {
+  it('keeps the application menu and native role labels named RenanDesign', () => {
     expect(menu).not.toMatch(/label:\s*app\.name/);
     expect(menu).toContain("label: t('app.name')");
     expect(menu).toContain("{ role: 'about', label: t('menu.about') }");
     expect(menu).toContain("{ role: 'hide' as const, label: t('menu.hide') }");
     expect(menu).toContain("{ role: 'quit', label: t('menu.quit') }");
-    expect(t('app.name')).toBe('Onlook');
-    expect(t('menu.quit')).toBe('Quit Onlook');
-    expect(t('menu.about')).toBe('About Onlook');
-    expect(t('menu.hide')).toBe('Hide Onlook');
+    expect(t('app.name')).toBe('RenanDesign');
+    expect(t('menu.quit')).toBe('Quit RenanDesign');
+    expect(t('menu.about')).toBe('About RenanDesign');
+    expect(t('menu.hide')).toBe('Hide RenanDesign');
   });
 
-  it('keeps the About panel named Onlook rather than the encryption namespace', () => {
+  it('keeps the About panel named RenanDesign rather than the encryption namespace', () => {
     expect(startup).toContain("applicationName: t('app.name')");
-    expect(buildIdentity(true).productName).toBe('Onlook');
-    expect(buildIdentity(false).productName).toBe('Onlook Source');
+    expect(buildIdentity(true).productName).toBe('RenanDesign');
+    expect(buildIdentity(false).productName).toBe('RenanDesign');
     expect(startup).not.toContain('app.getName()');
   });
 
-  it.each(['index.ts', 'reset/index.ts', 'workspace/remove-project.ts', 'tabs/close-dialog.ts', 'updater/location.ts'])('%s pins native dialog titles to Onlook instead of the storage name', (path) => {
+  it.each(['index.ts', 'reset/index.ts', 'workspace/remove-project.ts', 'tabs/close-dialog.ts', 'updater/location.ts'])('%s pins native dialog titles to RenanDesign instead of the storage name', (path) => {
     const source = readFileSync(new URL(`./${path}`, import.meta.url), 'utf8');
     const dialogs = [...source.matchAll(/(?:showMessageBoxSync|showMessageBox|show)\(\{([\s\S]*?)\n\s*\}\)/g)];
     expect(dialogs.length).toBeGreaterThan(0);

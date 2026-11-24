@@ -1,4 +1,4 @@
-name: Build Onlook Source
+name: Build RenanDesign
 
 on:
   push:

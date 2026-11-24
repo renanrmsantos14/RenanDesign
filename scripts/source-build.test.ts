@@ -12,8 +12,8 @@ const source = load(read('apps/studio/electron-builder.yml'));
 const official = load(read('apps/studio/electron-builder.official.yml'));
 
 test('default source packaging has no official identity, protocol or update feed', () => {
-  expect(source.appId).toBe('com.onlook.studio.source');
-  expect(source.productName).toBe('Onlook Source');
+  expect(source.appId).toBe('com.renan.renandesign.source');
+  expect(source.productName).toBe('RenanDesign');
   expect(source.protocols).toEqual([]);
   expect(source.publish).toBeNull();
   expect(source.generateUpdatesFilesForAllChannels).toBe(false);
@@ -21,8 +21,8 @@ test('default source packaging has no official identity, protocol or update feed
 
 test('official packaging retains the established identity, protocol and update feed', async () => {
   expect(official.extends).toBe('./electron-builder.yml');
-  expect(official.appId).toBe('com.onlook.studio');
-  expect(official.productName).toBe('Onlook');
+  expect(official.appId).toBe('com.renan.renandesign');
+  expect(official.productName).toBe('RenanDesign');
   expect(official.protocols).toEqual([{ name: 'Onlook attribution', schemes: ['onlook'] }]);
   expect(official.publish).toEqual({ provider: 'generic', url: 'https://pub-9ae0145bf4194910900ac1b79bf65df3.r2.dev/', channel: 'latest', useMultipleRangeRequest: false });
   expect(official.generateUpdatesFilesForAllChannels).toBe(true);

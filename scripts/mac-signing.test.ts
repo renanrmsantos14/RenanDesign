@@ -7,7 +7,7 @@ const signature = 'Identifier=com.onlook.studio\nTeamIdentifier=WLQ3KTS8SZ\ndesi
 describe('macOS release signing continuity', () => {
   it('keeps the builder app identifier aligned with the established signed app', () => {
     const config = readFileSync(new URL('../apps/studio/electron-builder.official.yml', import.meta.url), 'utf8');
-    expect(config.match(/^appId:\s*([^\s]+)\s*$/m)?.[1]).toBe('com.onlook.studio');
+    expect(config.match(/^appId:\s*([^\s]+)\s*$/m)?.[1]).toBe('com.renan.renandesign');
   });
 
   it('accepts the stable signing requirement and codesign comment formatting', () => {

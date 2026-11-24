@@ -11,7 +11,7 @@
   "settings.experimental": "実験的機能",
   "settings.analytics.title": "アナリティクス",
   "settings.analytics.label": "アナリティクスを共有",
-  "settings.analytics.description": "使用状況データ、セッション記録、診断ログを共有して、Onlook の改善にご協力ください。",
+  "settings.analytics.description": "使用状況データ、セッション記録、診断ログを共有して、RenanDesign の改善にご協力ください。",
   "settings.analytics.saveFailed": "保存できませんでした。もう一度お試しください。",
   "settings.tips.title": "ヒント",
   "settings.tips.label": "ヒントを再表示",

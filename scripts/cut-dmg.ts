@@ -28,7 +28,7 @@ const appDir = join(repoRoot, 'apps/studio');
 const releaseDir = join(repoRoot, 'release');
 const appManifest = JSON.parse(readFileSync(join(appDir, 'package.json'), 'utf8')) as { productName: string; version: string };
 const officialBuild = process.env['STUDIO_CLOUD_BUILD'] === '1';
-const productName = officialBuild ? appManifest.productName : 'Onlook Source';
+const productName = officialBuild ? appManifest.productName : 'RenanDesign';
 
 function step(label: string): void {
   console.log(`\n${bold(`▸ ${label}`)}`);

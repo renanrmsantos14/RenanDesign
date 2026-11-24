@@ -1,6 +1,6 @@
-appId: com.onlook.studio.source
-productName: Onlook Source
-copyright: Copyright © 2026 Onlook
+appId: com.renan.renandesign.source
+productName: RenanDesign
+copyright: Copyright © 2026 RenanDesign (fork of Onlook, Apache-2.0)
 
 protocols: []
 

@@ -1,18 +1,18 @@
+> **RenanDesign** is a fork of [Onlook](https://github.com/onlook-dev/onlook), maintained at
+> [renanrmsantos14/RenanDesign](https://github.com/renanrmsantos14/RenanDesign). It keeps the Apache-2.0 license and
+> credits the Onlook authors; only the visible app name and the app identifier (`com.renan.renandesign`) differ, so it
+> installs next to the official Onlook app. Internal package names, data folders and Onlook cloud endpoints are unchanged.
+
 <div align="center">
 <img width="800" alt="header image" src="assets/web-preview.png">
-<h3 align="center">Onlook</h3>
+<h3 align="center">RenanDesign</h3>
   <p align="center">
     <strong>The developer tool for Designers</strong>
     <br />
-    Onlook is a free, local-first editor where designers craft exceptional experiences in code
+    RenanDesign is a free, local-first editor where designers craft exceptional experiences in code
     <br />
     <br />
-    <a href="https://www.onlook.com/install?utm_source=github&utm_medium=readme"><strong>→ Download today </strong></a>
-  </p>
-  <p align="center">
-    👨‍💻👩‍💻👨‍💻
-    <a href="https://www.ycombinator.com/companies/onlook/jobs/">We're hiring engineers and designers in SF!</a>
-    👩‍💻👨‍💻👩‍💻
+    <a href="SOURCE_BUILD.md"><strong>→ Build from source </strong></a>
   </p>
 
 [![Discord][discord-shield]][discord-url]
@@ -69,13 +69,7 @@ open-source alternative to Figma, V0, Replit Agent, Base 44, Webflow, etc.
   - [x] One-press pull requests, from checks to merge
 
 ## Getting Started
-🖥️ [Download the Desktop App](https://www.onlook.com/install) (Recommended) – The fastest way to get started with Onlook.
-
-* macOS (Apple Silicon · Intel x64) → [Download](https://www.onlook.com/install)
-* Windows – Coming soon. Join the [Windows waitlist here](https://www.onlook.com/waitlist?os=windows) and be emailed when we have updates.
-* Linux – No Linux artifact is published and we're still gauging demand for Linux. Join the [Linux waitlist here](https://www.onlook.com/waitlist?os=linux) and be emailed when we have updates. 
-
-🧑‍💻 Build from source – [SOURCE_BUILD.md](SOURCE_BUILD.md) covers building and running Onlook on a Mac. No Onlook account or cloud keys needed.
+🧑‍💻 Build from source – [SOURCE_BUILD.md](SOURCE_BUILD.md) covers building and running RenanDesign on a Mac. No Onlook account or cloud keys needed.
 
 ## How it works
 
@@ -113,7 +107,8 @@ Because Onlook runs your project with its own tooling, it works with all web fra
 ## Contributing
 
 If you have a suggestion that would make this better, please fork the repo and
-create a pull request. You can also browse [open issues](https://github.com/onlook-dev/onlook/issues).
+create a pull request. You can also browse [open issues](https://github.com/renanrmsantos14/RenanDesign/issues).
+Upstream issues live at [onlook-dev/onlook](https://github.com/onlook-dev/onlook/issues).
 
 See the [CONTRIBUTING.md](CONTRIBUTING.md) for instructions and code of conduct.
 
@@ -141,11 +136,11 @@ To report a security issue, follow [SECURITY.md](SECURITY.md) instead of opening
 
 ## Usage data
 
-Onlook collects product usage analytics to help us improve the app. In the official download they are on by default; a build from source asks first. You can turn them off in Settings, or set `STUDIO_TELEMETRY=0` to run or build without them. See the [privacy policy](https://www.onlook.com/privacy-policy) for details.
+RenanDesign (like Onlook) collects product usage analytics to help us improve the app. In the official download they are on by default; a build from source asks first. You can turn them off in Settings, or set `STUDIO_TELEMETRY=0` to run or build without them. See the [privacy policy](https://www.onlook.com/privacy-policy) for details.
 
 ## License
 
-Onlook's source code is distributed under the Apache 2.0 License. See
+RenanDesign's source code, like Onlook's, is distributed under the Apache 2.0 License. See
 [LICENSE](LICENSE) for details.
 
 The license covers source code, not every asset in this repository. Onlook's
