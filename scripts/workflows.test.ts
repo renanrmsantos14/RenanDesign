@@ -158,6 +158,12 @@ test('unsigned Windows packaging and upload require an explicit manual dispatch 
   expect(windows?.env?.['ONLOOK_WINDOWS_ALLOW_UNSIGNED']).toBeUndefined();
 });
 
+test('Windows runtime checks skip the Electron rebuild unless the run packages an installer', () => {
+  const steps = workflow('ci.yml').parsed.jobs['windows']?.steps ?? [];
+  const install = steps.find((step) => step.run === 'bun install --frozen-lockfile');
+  expect(install?.env?.['STUDIO_SKIP_APP_DEPS']).toBe("${{ (github.event_name == 'workflow_dispatch' && inputs.package) && '0' || '1' }}");
+});
+
 test('Windows dependency downloads do not share a cross-run cache', () => {
   const steps = workflow('ci.yml').parsed.jobs['windows']?.steps ?? [];
   const cache = steps.find((step) => step.uses?.startsWith('actions/cache@'));
