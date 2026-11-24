@@ -24,6 +24,7 @@ export interface AppInfo {
   version: string;
   /** `unknown` when the build had no git (ONL-1964). */
   commit: string;
+  builtAt?: string;
   electronVersion: string;
   chromeVersion: string;
   nodeVersion: string;

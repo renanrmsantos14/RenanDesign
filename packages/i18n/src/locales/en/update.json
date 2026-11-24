@@ -2,5 +2,9 @@
   "update.move.message": "Move RenanDesign to your Applications folder?",
   "update.move.detail": "RenanDesign is running from the disk image or Downloads, where it can't update itself. Your projects and settings come with it.",
   "update.move.move": "Move to Applications",
-  "update.move.notNow": "Not Now"
+  "update.move.notNow": "Not Now",
+  "update.prompt.message": "RenanDesign {version} is available",
+  "update.prompt.detail": "You have {current}. Update now to download it and restart RenanDesign.",
+  "update.prompt.now": "Update Now",
+  "update.prompt.later": "Later"
 }

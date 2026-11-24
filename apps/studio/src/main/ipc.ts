@@ -1,7 +1,7 @@
 import { app, clipboard } from 'electron';
 import { handle } from './ipc/bridge.js';
 import { IPC_INVOKE, type AppInfo, type PtyEchoRequest, type StudioFlags } from '@studio/events';
-import { COMMIT_SHA } from './build-info.js';
+import { BUILT_AT, COMMIT_SHA } from './build-info.js';
 import { rendererFlags } from './flags/index.js';
 import { ptyEcho } from './pty.js';
 import { log } from './log/index.js';
@@ -31,6 +31,7 @@ export function registerIpcHandlers(): void {
     return {
       version: app.getVersion(),
       commit: COMMIT_SHA,
+      ...(BUILT_AT ? { builtAt: BUILT_AT } : {}),
       electronVersion: process.versions.electron ?? 'unknown',
       chromeVersion: process.versions.chrome ?? 'unknown',
       nodeVersion: process.versions.node,

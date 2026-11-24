@@ -13,6 +13,7 @@ import { startBlankCreate } from './create/store.js';
 import { useProjectCreateStore } from './create/projectCreate.js';
 import { applyCreateScreen, commitFirstScreen, screenForCreate, type Screen } from './activation/advance.js';
 import { primeAppInfo } from './app/store.js';
+import { VersionStamp } from './app/VersionStamp.js';
 import { capable } from './capabilities.js';
 import { primeFlags } from './flags/store.js';
 import { heldProjectPath, parkedAssignment } from './heldProject.js';
@@ -350,6 +351,7 @@ export function Root(): React.JSX.Element {
       <ReportDialog />
       {/* Here, not in `App`: this returns the Projects Screen before `App` renders, so a mount there has no door on Projects. */}
       <SettingsDialog />
+      <VersionStamp />
     </>
   );
 

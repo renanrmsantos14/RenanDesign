@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import electron, { app } from 'electron';
+import electron, { app, dialog } from 'electron';
+import { t } from '@studio/i18n';
 import { handle, on } from '../ipc/bridge.js';
 import { IPC_EMIT, IPC_INVOKE, IPC_SEND, type UpdateState } from '@studio/events';
 import type { AppUpdater } from 'electron-updater';
@@ -11,6 +12,7 @@ import { installUpdateProof } from './proof.js';
 import { UpdateMachine } from './machine.js';
 import { log } from '../log/index.js';
 import { capabilities } from '../cloud/capabilities.js';
+import { SELF_UPDATE } from '../build-kind.js';
 import { isMac } from '../env/platform.js';
 import { devSwitches } from '../env/dev-switches.js';
 
@@ -26,6 +28,7 @@ const listeners = new Set<(next: UpdateState) => void>();
 
 const machine = new UpdateMachine({
   waitForNativeStage: isMac(),
+  ...(SELF_UPDATE ? { checkIntervalMs: 2 * 60 * 1000 } : {}),
   onInstallFailure: (error) => {
     logger.warn('install failed', { error });
     reportUpdateFailure('install', error);
@@ -152,7 +155,7 @@ async function wire(url: string): Promise<void> {
   try {
     autoUpdater = await loadAutoUpdater();
 
-    session = createUpdateSession(autoUpdater, machine, isMac() ? electron.autoUpdater : undefined);
+    session = createUpdateSession(autoUpdater, machine, isMac() ? electron.autoUpdater : undefined, undefined, undefined, SELF_UPDATE ? askToUpdate : undefined);
     logger.info('enabled', { url });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -166,6 +169,19 @@ async function wire(url: string): Promise<void> {
   app.on('before-quit', () => machine.stopPeriodicChecks());
 
   void session.check();
+}
+
+async function askToUpdate(version: string): Promise<boolean> {
+  const { response } = await dialog.showMessageBox({
+    title: t('app.name'),
+    type: 'info',
+    message: t('update.prompt.message', { version }),
+    detail: t('update.prompt.detail', { current: app.getVersion() }),
+    buttons: [t('update.prompt.now'), t('update.prompt.later')],
+    defaultId: 0,
+    cancelId: 1,
+  });
+  return response === 0;
 }
 
 export async function checkForUpdatesNow(): Promise<void> {

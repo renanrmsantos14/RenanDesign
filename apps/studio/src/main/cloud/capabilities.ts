@@ -1,6 +1,6 @@
 import * as provider from '@onlook/cloud-provider';
 import { boundCapabilities, type StudioCapabilities } from '@studio/events';
-import { OFFICIAL_BUILD } from '../build-kind.js';
+import { OFFICIAL_BUILD, SELF_UPDATE } from '../build-kind.js';
 import { proofSwitchOn } from '../diagnostics/gate.js';
 import type { CloudIdentity } from './client.js';
 
@@ -9,7 +9,7 @@ function buildCapabilities(module: object): StudioCapabilities {
   const cloud = import.meta.env.MAIN_VITE_ONLOOK_CLOUD === 'true';
   const identity = Reflect.get(module, 'identity') as Partial<CloudIdentity> | undefined;
   const account = typeof identity?.enabled === 'function' ? identity.enabled() : cloud;
-  return { account, teams: cloud, github: cloud, report: cloud, survey: cloud, updates: OFFICIAL_BUILD, links: OFFICIAL_BUILD };
+  return { account, teams: cloud, github: cloud, report: cloud, survey: cloud, updates: OFFICIAL_BUILD || SELF_UPDATE, links: OFFICIAL_BUILD };
 }
 
 export function resolveCapabilities(module: object): StudioCapabilities {

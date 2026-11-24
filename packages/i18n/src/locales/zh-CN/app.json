@@ -1,3 +1,4 @@
 {
-  "app.name": "RenanDesign"
+  "app.name": "RenanDesign",
+  "app.version-stamp": "v{version} · {date}"
 }

@@ -18,6 +18,7 @@ const { channel, version: requestedVersion } = releaseOptions(args, true);
 if (process.platform !== 'win32' || process.arch !== 'x64') throw new Error('Build Windows x64 on a Windows x64 runner');
 const manifest = JSON.parse(readFileSync(join(app, 'package.json'), 'utf8')) as { version: string; productName: string };
 const officialBuild = process.env['STUDIO_CLOUD_BUILD'] === '1';
+const feedUrl = officialBuild ? undefined : process.env['STUDIO_UPDATE_FEED'];
 const productName = officialBuild ? manifest.productName : 'RenanDesign';
 const version = requestedVersion ?? (channel === undefined ? manifest.version : stamp(manifest.version, commitCount(root), channel));
 const signing = windowsSigning(process.env);
@@ -29,6 +30,7 @@ writeFileSync(config, JSON.stringify({
   extends: join(app, officialBuild ? 'electron-builder.official.yml' : 'electron-builder.yml'),
   forceCodeSigning: signing.forceCodeSigning,
   win: signing.win,
+  ...(feedUrl ? { publish: { provider: 'generic', url: feedUrl, channel: 'latest', useMultipleRangeRequest: false } } : {}),
 }));
 
 function run(argv: string[]): void {
@@ -46,7 +48,7 @@ if (!args.includes('--dir')) {
   for (const name of artifactNames(productName, version, 'win')) {
     if (!existsSync(join(release, name))) throw new Error(`Missing Windows payload: ${name}`);
   }
-  const feedProblemsFound = officialBuild ? feedProblems(readFileSync(join(release, feedNames('win', channel)[0]!), 'utf8'), productName, version, 'win') : [];
+  const feedProblemsFound = officialBuild || feedUrl ? feedProblems(readFileSync(join(release, feedNames('win', channel)[0]!), 'utf8'), productName, version, 'win') : [];
   if (feedProblemsFound.length) throw new Error(feedProblemsFound.join('\n'));
 }
 writeFileSync(join(release, 'signing-win.txt'), signing.unsigned ? 'unsigned' : 'signed');

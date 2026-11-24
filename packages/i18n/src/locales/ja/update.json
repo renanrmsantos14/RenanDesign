@@ -2,5 +2,9 @@
   "update.move.message": "RenanDesign を「アプリケーション」フォルダーに移動しますか？",
   "update.move.detail": "RenanDesign はディスクイメージか「ダウンロード」フォルダーから実行されているため、自動でアップデートできません。移動しても、プロジェクトと設定はそのまま使えます。",
   "update.move.move": "アプリケーションに移動",
-  "update.move.notNow": "今はしない"
+  "update.move.notNow": "今はしない",
+  "update.prompt.message": "RenanDesign {version} が利用できます",
+  "update.prompt.detail": "現在のバージョンは {current} です。今すぐアップデートすると、ダウンロード後に RenanDesign が再起動します。",
+  "update.prompt.now": "今すぐアップデート",
+  "update.prompt.later": "あとで"
 }
