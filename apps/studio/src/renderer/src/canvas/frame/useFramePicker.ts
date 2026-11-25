@@ -84,6 +84,7 @@ export function useFramePicker(
   const isLive = useCanvasStore(isPickerLive);
   /** Interact hides the outlines and keeps the selection. */
   const areOutlinesVisible = useCanvasStore((state) => state.mode === 'design');
+  const isPreviewHeld = useCanvasStore((state) => state.previewHeldTool !== null);
   const addElementSelection = useCanvasStore((state) => state.addElementSelection);
   const removeElementSelection = useCanvasStore((state) => state.removeElementSelection);
   const setElementStale = useCanvasStore((state) => state.setElementStale);
@@ -369,6 +370,20 @@ export function useFramePicker(
       // Not attached yet.
     }
   }, [ref, areOutlinesVisible, mountNonce]);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    try {
+      element.send(GUEST_CHANNEL_TO_GUEST, {
+        type: 'previewHold',
+        held: isPreviewHeld,
+        generation: activeGeneration.current,
+      } satisfies PickerToGuest);
+    } catch {
+      // Not attached yet.
+    }
+  }, [ref, isPreviewHeld, mountNonce]);
 
   // Not gated on `isLive`: a selected element keeps its outline where the
   // picker is not. Sent at the CURRENT generation — allocating a fresh one

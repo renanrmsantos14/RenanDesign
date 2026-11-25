@@ -46,6 +46,7 @@ interface Held {
 }
 
 let armed = false;
+let previewHeld = false;
 let acceptingPicks = false;
 let currentGeneration = 0;
 let currentSeedGeneration = 0;
@@ -537,7 +538,42 @@ function isPlainModifier(event: KeyboardEvent, key: 'Control' | 'Shift'): boolea
 }
 
 function releasePreviewHold(): void {
+  previewHeld = false;
   send({ type: 'preview-hold', held: false });
+}
+
+const FOCUSABLE = 'input, textarea, select, button, a[href], [tabindex], [contenteditable]';
+
+// The page would read the held ⇧ as a shift-click: a link opens a window, a press extends a text selection.
+function dropHeldShift(event: Event): void {
+  if (!previewHeld || !event.isTrusted || !(event instanceof MouseEvent) || !event.shiftKey) return;
+  if (event.ctrlKey || event.metaKey || event.altKey || !(event.target instanceof Element)) return;
+  // A cancelled pointerdown would also cancel the mousedown the page still needs.
+  if (!event.type.startsWith('pointer')) event.preventDefault();
+  event.stopImmediatePropagation();
+  const init = { ...pointerInit(event), shiftKey: false };
+  const copy = event instanceof PointerEvent ? new PointerEvent(event.type, init) : new MouseEvent(event.type, init);
+  if (event.type === 'mousedown') (event.target.closest(FOCUSABLE) as HTMLElement | null)?.focus();
+  event.target.dispatchEvent(copy);
+}
+
+function pointerInit(event: MouseEvent): PointerEventInit {
+  const base: PointerEventInit = {
+    bubbles: event.bubbles,
+    cancelable: event.cancelable,
+    composed: event.composed,
+    view: event.view,
+    detail: event.detail,
+    screenX: event.screenX,
+    screenY: event.screenY,
+    clientX: event.clientX,
+    clientY: event.clientY,
+    button: event.button,
+    buttons: event.buttons,
+    relatedTarget: event.relatedTarget,
+  };
+  if (!(event instanceof PointerEvent)) return base;
+  return { ...base, pointerId: event.pointerId, pointerType: event.pointerType, isPrimary: event.isPrimary, width: event.width, height: event.height, pressure: event.pressure };
 }
 
 function onKeyUp(event: KeyboardEvent): void {
@@ -705,6 +741,11 @@ ipcRenderer.on(GUEST_CHANNEL_TO_GUEST, guarded((_event: unknown, message: Picker
     if (process.env['STUDIO_ERROR_HOOK'] === '1') throw new Error('dev hook: frame preload threw');
     return;
   }
+  // Ungated: Interact has no live picker, and the hold carries no page content.
+  if (message.type === 'previewHold') {
+    previewHeld = message.held;
+    return;
+  }
   if (message.generation < currentGeneration) return;
   currentGeneration = message.generation;
   if (!canDrawOverlay) return;
@@ -784,6 +825,9 @@ function onContextMenu(event: MouseEvent): void {
 }
 
 const captureNonPassive = { capture: true, passive: false } as const;
+for (const type of ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'dblclick', 'auxclick'] as const) {
+  addEventListener(type, guarded(dropHeldShift), captureNonPassive);
+}
 addEventListener('wheel', guarded(onWheel), captureNonPassive);
 addEventListener('keydown', guarded(onKeyDown), true);
 addEventListener('keyup', guarded(onKeyUp), true);
