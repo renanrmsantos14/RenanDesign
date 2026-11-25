@@ -52,6 +52,12 @@ import { IconCloudDownload } from '@central-icons-react/round-outlined-radius-1-
 import { IconArrowOutOfBox } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconArrowOutOfBox';
 import { IconCloudUpload } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconCloudUpload';
 import { IconMerged } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconMerged';
+import { IconPullRequest } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconPullRequest';
+import { IconPullRequestSimple } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconPullRequestSimple';
+import { IconPullRequestClosedSimple } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconPullRequestClosedSimple';
+import { IconCircleX } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconCircleX';
+import { IconCircleDotted } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconCircleDotted';
+import { IconCircleMinus } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconCircleMinus';
 import { IconAiTokens } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconAiTokens';
 import { IconClaudeai } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconClaudeai';
 import { IconFileSparkle } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/IconFileSparkle';
@@ -169,6 +175,12 @@ export const CloudDownloadIcon = glyph(IconCloudDownload, 'CloudDownloadIcon');
 /** The selected artifact's export control beside its title (ONL-2744). */
 export const ExportIcon = glyph(IconArrowOutOfBox, 'ExportIcon');
 export const MergedIcon = glyph(IconMerged, 'MergedIcon');
+export const PullRequestIcon = glyph(IconPullRequest, 'PullRequestIcon');
+export const PullRequestDraftIcon = glyph(IconPullRequestSimple, 'PullRequestDraftIcon');
+export const PullRequestClosedIcon = glyph(IconPullRequestClosedSimple, 'PullRequestClosedIcon');
+export const CircleXIcon = glyph(IconCircleX, 'CircleXIcon');
+export const CircleDottedIcon = glyph(IconCircleDotted, 'CircleDottedIcon');
+export const CircleMinusIcon = glyph(IconCircleMinus, 'CircleMinusIcon');
 /** The chat header's way into the sound picker (ONL-2084). */
 export const BellIcon = glyph(IconBell, 'BellIcon');
 

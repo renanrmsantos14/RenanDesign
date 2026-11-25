@@ -88,6 +88,10 @@ export interface GitPullRequestDetail {
   state: GitPrState;
   isDraft: boolean;
   baseRefName: string;
+  headRefName: string;
+  author: string;
+  additions: number;
+  deletions: number;
   checks: GitPullRequestCheck[];
   canMerge: boolean;
 }

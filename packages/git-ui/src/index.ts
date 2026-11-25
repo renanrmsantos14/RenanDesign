@@ -29,4 +29,4 @@ export type {
 export { fill } from './strings.js';
 export type { GitStatusStrings } from './strings.js';
 export { GitPullRequestPanel } from './GitPullRequestPanel.js';
-export type { GitMergeFailure, GitPullRequestPanelProps, GitPullRequestPanelStrings } from './GitPullRequestPanel.js';
+export type { GitMergeFailure, GitPullRequestPanelGlyphs, GitPullRequestPanelProps, GitPullRequestPanelStrings } from './GitPullRequestPanel.js';

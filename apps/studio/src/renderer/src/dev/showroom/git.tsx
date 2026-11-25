@@ -17,7 +17,7 @@ import {
 import { PILL_FIXTURES as STATES, STUB_STRINGS as STRINGS } from '@studio/git-ui/fixtures';
 import { cardStateFor } from '@studio/git-ui/derive';
 import type { GitPullRequestDetail } from '@studio/events';
-import { GIT_PILL_GLYPHS as GLYPHS, GIT_PR_PANEL_STRINGS, cardGlyphFor, leadingFor } from '../../git-status/presentation.js';
+import { GIT_PILL_GLYPHS as GLYPHS, GIT_PR_PANEL_GLYPHS, GIT_PR_PANEL_STRINGS, cardGlyphFor, leadingFor } from '../../git-status/presentation.js';
 import { PROJECT_CARD_WIDTH, ProjectCard, type ProjectCardProps } from '../../projects/ProjectCard.js';
 import { noop, type Category, type Gallery } from './Showroom.js';
 
@@ -149,7 +149,8 @@ const CATEGORIES: Category[] = [
     id: 'pr-panel',
     title: 'The PR panel — the branch’s PRs, their checks and merge',
     stories: [
-      { id: 'git-gallery-pr-panel-list', title: 'Open and merged PRs', render: () => <PrPanel list={{ ok: true, pulls: PULLS }} /> },
+      { id: 'git-gallery-pr-panel-list', title: 'Every PR of the branch', render: () => <PrPanel list={{ ok: true, pulls: PULLS }} /> },
+      { id: 'git-gallery-pr-panel-detail', title: 'One PR with its checks', render: () => <PrPanel list={{ ok: true, pulls: PULLS }} selected={41} /> },
       { id: 'git-gallery-pr-panel-confirm', title: 'Merge asks once more', render: () => <PrPanel list={{ ok: true, pulls: PULLS.slice(0, 1) }} confirming={41} /> },
       { id: 'git-gallery-pr-panel-failed', title: 'A merge GitHub refused', render: () => <PrPanel list={{ ok: true, pulls: PULLS.slice(0, 1) }} mergeFailure={{ number: 41, reason: 'not-mergeable' }} /> },
       { id: 'git-gallery-pr-panel-loading', title: 'Loading', render: () => <PrPanel /> },
@@ -178,7 +179,7 @@ const CATEGORIES: Category[] = [
 
 const PULLS: GitPullRequestDetail[] = [
   {
-    number: 41, title: 'Pricing page v2', url: 'https://example.test/pull/41', state: 'OPEN', isDraft: false, baseRefName: 'main', canMerge: true,
+    number: 41, title: 'Pricing page v2', url: 'https://example.test/pull/41', state: 'OPEN', isDraft: false, baseRefName: 'main', headRefName: 'feat/pricing-v2', author: 'renan', additions: 214, deletions: 38, canMerge: true,
     checks: [
       { name: 'verify', state: 'passing', url: 'https://example.test/run/1' },
       { name: 'e2e', state: 'pending' },
@@ -186,11 +187,26 @@ const PULLS: GitPullRequestDetail[] = [
       { name: 'docs', state: 'skipped' },
     ],
   },
-  { number: 37, title: 'First pricing draft', url: 'https://example.test/pull/37', state: 'MERGED', isDraft: false, baseRefName: 'main', canMerge: false, checks: [] },
+  { number: 39, title: 'Pricing table copy for the annual plan and the enterprise tier', url: 'https://example.test/pull/39', state: 'OPEN', isDraft: true, baseRefName: 'main', headRefName: 'feat/pricing-v2', author: 'renan', additions: 12, deletions: 3, canMerge: false, checks: [] },
+  { number: 37, title: 'First pricing draft', url: 'https://example.test/pull/37', state: 'MERGED', isDraft: false, baseRefName: 'main', headRefName: 'feat/pricing-v2', author: 'renan', additions: 39, deletions: 0, canMerge: false, checks: [] },
+  { number: 33, title: 'Pricing experiment', url: 'https://example.test/pull/33', state: 'CLOSED', isDraft: false, baseRefName: 'develop', headRefName: 'feat/pricing-v2', author: 'renan', additions: 5, deletions: 120, canMerge: false, checks: [] },
 ];
 
-function PrPanel(props: Partial<React.ComponentProps<typeof GitPullRequestPanel>>) {
-  return <GitPullRequestPanel strings={GIT_PR_PANEL_STRINGS} onOpen={noop} onMerge={noop} onConfirmMerge={noop} onCancelMerge={noop} {...props} />;
+function PrPanel({ selected: initial, ...props }: Partial<React.ComponentProps<typeof GitPullRequestPanel>>) {
+  const [selected, setSelected] = useState(initial);
+  return (
+    <GitPullRequestPanel
+      strings={GIT_PR_PANEL_STRINGS}
+      glyphs={GIT_PR_PANEL_GLYPHS}
+      {...(selected === undefined ? {} : { selected })}
+      onSelect={setSelected}
+      onOpen={noop}
+      onMerge={noop}
+      onConfirmMerge={noop}
+      onCancelMerge={noop}
+      {...props}
+    />
+  );
 }
 
 const PROJECT_CARD_FRAME = { width: PROJECT_CARD_WIDTH } as const;

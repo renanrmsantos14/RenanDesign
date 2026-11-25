@@ -16,6 +16,10 @@ const PULL = {
   state: 'OPEN',
   isDraft: false,
   baseRefName: 'main',
+  headRefName: 'feat',
+  author: { login: 'me' },
+  additions: 39,
+  deletions: 2,
   mergeStateStatus: 'CLEAN',
   headRepositoryOwner: { login: 'me' },
   statusCheckRollup: [
@@ -56,7 +60,7 @@ describe('listPullRequests', () => {
     const { runner, calls } = scripted([ok(JSON.stringify([PULL]))]);
     const list = await listPullRequests(CWD, MEASURED, runner);
     expect(calls[0]).toEqual(expect.arrayContaining(['pr', 'list', '-R', 'me/app', '--head', 'feat', '--state', 'all']));
-    expect(list.ok && list.pulls[0]).toMatchObject({ number: 7, title: 'Add the panel', canMerge: true });
+    expect(list.ok && list.pulls[0]).toMatchObject({ number: 7, title: 'Add the panel', headRefName: 'feat', author: 'me', additions: 39, deletions: 2, canMerge: true });
     expect(list.ok && list.pulls[0]?.checks.map((check) => check.state)).toEqual(['passing', 'pending', 'failing']);
   });
 

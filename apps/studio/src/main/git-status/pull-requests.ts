@@ -36,6 +36,10 @@ interface RawPull {
   state: GitPrState;
   isDraft: boolean;
   baseRefName: string;
+  headRefName: string;
+  author?: { login?: string } | null;
+  additions?: number;
+  deletions?: number;
   mergeStateStatus: string;
   statusCheckRollup?: RawCheck[] | null;
   headRepositoryOwner?: { login?: string } | null;
@@ -74,6 +78,10 @@ function detailOf(raw: RawPull, viewerCanMerge: boolean): GitPullRequestDetail {
     state: raw.state,
     isDraft: raw.isDraft,
     baseRefName: raw.baseRefName,
+    headRefName: raw.headRefName,
+    author: raw.author?.login ?? '',
+    additions: raw.additions ?? 0,
+    deletions: raw.deletions ?? 0,
     checks: (raw.statusCheckRollup ?? []).map(checkOf),
     canMerge: viewerCanMerge && raw.state === 'OPEN' && !raw.isDraft && MERGEABLE_STATES.has(raw.mergeStateStatus),
   };
@@ -90,7 +98,7 @@ export async function listPullRequests(
   const headOwner = measurement.repo?.split('/')[0]?.toLowerCase();
   const result = await runner(worktreePath, [
     'pr', 'list', '-R', repo, '--head', measurement.branch, '--state', 'all', '--limit', '200',
-    '--json', 'number,title,url,state,isDraft,baseRefName,mergeStateStatus,statusCheckRollup,headRepositoryOwner',
+    '--json', 'number,title,url,state,isDraft,baseRefName,headRefName,author,additions,deletions,mergeStateStatus,statusCheckRollup,headRepositoryOwner',
   ]);
   if (!result.ok) {
     logger.warn('could not list pull requests', { timedOut: result.timedOut, exitCode: result.exitCode });

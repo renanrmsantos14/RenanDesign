@@ -1,9 +1,14 @@
 import type { ComponentType } from 'react';
 import { Icon, type IconType } from '@astryxdesign/core/Icon';
 import type { CentralIconBaseProps } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/CentralIconBase';
-import type { GitCardStateId, GitPillGlyphs, GitPillStateId, GitPullRequestPanelStrings, GitStatusStrings } from '@studio/git-ui';
+import type { GitCardStateId, GitPillGlyphs, GitPillStateId, GitPullRequestPanelGlyphs, GitPullRequestPanelStrings, GitStatusStrings } from '@studio/git-ui';
 import {
+  BackIcon,
   BranchIcon,
+  CircleCheckIcon,
+  CircleDottedIcon,
+  CircleMinusIcon,
+  CircleXIcon,
   CheckIcon,
   ChevronDownIcon,
   CloudDownloadIcon,
@@ -14,6 +19,9 @@ import {
   GlyphLoadingCircle,
   MergedIcon,
   OpenExternalIcon,
+  PullRequestClosedIcon,
+  PullRequestDraftIcon,
+  PullRequestIcon,
 } from '../icons/glyphs.js';
 import { t } from '@studio/i18n';
 
@@ -81,8 +89,11 @@ export const GIT_PR_PANEL_STRINGS: GitPullRequestPanelStrings = {
   empty: t('gitStatus.prPanel.empty'),
   failed: t('gitStatus.prPanel.failed'),
   noGithub: t('gitStatus.prPanel.noGithub'),
-  title: t('gitStatus.prPanel.title'),
-  base: t('gitStatus.prPanel.base'),
+  number: t('gitStatus.prPanel.number'),
+  branches: t('gitStatus.prPanel.branches'),
+  checksSummary: t('gitStatus.prPanel.checksSummary'),
+  back: t('gitStatus.prPanel.back'),
+  openOnGithub: t('gitStatus.prPanel.openOnGithub'),
   state: {
     open: t('gitStatus.prPanel.state.open'),
     draft: t('gitStatus.prPanel.state.draft'),
@@ -107,6 +118,13 @@ export const GIT_PR_PANEL_STRINGS: GitPullRequestPanelStrings = {
 };
 
 const glyph = (icon: IconType): React.ReactNode => <Icon icon={icon} size="sm" color="inherit" />;
+
+export const GIT_PR_PANEL_GLYPHS: GitPullRequestPanelGlyphs = {
+  pull: { open: glyph(PullRequestIcon), draft: glyph(PullRequestDraftIcon), merged: glyph(MergedIcon), closed: glyph(PullRequestClosedIcon) },
+  check: { passing: glyph(CircleCheckIcon), failing: glyph(CircleXIcon), pending: glyph(CircleDottedIcon), skipped: glyph(CircleMinusIcon) },
+  back: glyph(BackIcon),
+  external: glyph(OpenExternalIcon),
+};
 /** `size`, never `width`/`height` — the family ignores those and draws 24. */
 const spinnerAt = (size: number): React.ReactNode => (
   <span style={{ display: 'flex', animation: 'frame-reload-turn 900ms linear infinite' }}>
