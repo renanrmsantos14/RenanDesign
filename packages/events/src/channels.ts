@@ -342,7 +342,7 @@ export const CHANNELS = {
     /** Pushed on every clean-to-dirty transition: the idle sweep, a close and a quit all decide in main, and none can wait on a renderer that may already be gone (ONL-2563). */
     codeDirty: { name: 'code:dirty', from: TAB, request: one<CodeDirtyReport>(), tab: 'codeDirty' },
     updateRestart: { name: 'update:restart', from: ANY, request: none, tab: 'updateRestart', chrome: 'updateRestart' },
-    updateCheck: { name: 'update:check', from: TAB, request: none, tab: 'updateCheck' },
+    updateCheck: { name: 'update:check', from: ANY, request: none, tab: 'updateCheck', chrome: 'updateCheck' },
     updateAnswer: { name: 'update:answer', from: TAB, request: one<UpdateAnswer>(), tab: 'updateAnswer' },
     /** One of the application menu's own commands, asked for from the rail's logo menu (ONL-2563). */
     runAppCommand: { name: 'appCommands:run', from: ANY, request: one<AppCommandRequest>(), tab: 'runAppCommand', chrome: 'runAppCommand' },

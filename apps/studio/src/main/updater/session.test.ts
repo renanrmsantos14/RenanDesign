@@ -344,6 +344,13 @@ describe('asking before an update', () => {
     expect(updater.downloads).toEqual([]);
   });
 
+  it('asks again when the designer checks for updates after saying later', async () => {
+    const { asked, session } = asking(false);
+    await session.check();
+    await session.check(true);
+    expect(asked).toEqual(['1.2.3', '1.2.3']);
+  });
+
   it('downloads and installs once the designer says update now', async () => {
     const { updater, session } = asking(true);
     const check = session.check();

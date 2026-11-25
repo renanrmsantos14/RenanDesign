@@ -102,7 +102,7 @@ export function createUpdateSession(
         if (result?.isUpdateAvailable && (!stagedVersion || gt(result.updateInfo.version, stagedVersion))) {
           const version = result.updateInfo.version;
           if (ask) {
-            if (declined.has(version)) return;
+            if (declined.has(version) && !requested) return;
             accepted = await ask(result.updateInfo);
             if (!accepted) {
               declined.add(version);
