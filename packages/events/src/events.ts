@@ -554,6 +554,8 @@ export type ClientCommand =
       context?: string;
       /** Set only by the Project Chat composer: an open question takes the message as its answer instead of holding it (ONL-2583). */
       answersQuestion?: boolean;
+      /** Waits in the pen for the turn to end even where a mid-turn send would steer. */
+      queue?: boolean;
       /** A send from the next-tasks card; main stamps the row's origin, so the renderer never names one (ONL-2899). */
       suggestion?: SuggestionSend;
       /** A retry of a tapped task: main stamps it a suggestion, and counts no new tap (ONL-2901). */
@@ -579,7 +581,9 @@ export type ClientCommand =
   /** Answers on `AgentCommandAcceptance.taken`. */
   /** `auto` is the pen handing the prompt back rather than the designer pressing Edit; only telemetry reads it (ONL-2519). */
   | { type: 'pen.take'; penId: number; auto?: boolean }
-  | { type: 'pen.discard'; penId: number };
+  | { type: 'pen.discard'; penId: number }
+  /** Sends the waiting prompt now: into the live turn where it steers, or as a new turn when none runs. */
+  | { type: 'pen.send'; penId: number };
 
 export interface AgentSnapshot {
   sessionId?: string;

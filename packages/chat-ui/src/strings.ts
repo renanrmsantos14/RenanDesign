@@ -116,6 +116,8 @@ export interface ChatPenStrings {
   /** Puts the waiting prompt back in the composer, where it is editable. */
   takeLabel: string;
   discardLabel: string;
+  /** Sends the waiting prompt into the running turn, or as a new turn when none runs. */
+  sendLabel: string;
   /** Stands in for the text when a prompt carries only attachments, so the row is never blank. */
   attachmentsOnly: (count: number) => string;
 }
@@ -143,6 +145,8 @@ export interface ChatStrings {
 
   /** Composer. */
   composerPlaceholder: string;
+  /** While a turn runs that a send can steer: Enter steers, the modifier queues. */
+  composerPlaceholderRunning: string;
   composerPlaceholderDisconnected: string;
   /** While a question is open: the composer's send answers it (ONL-2583). */
   composerPlaceholderQuestion: string;

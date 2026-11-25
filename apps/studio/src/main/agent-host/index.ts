@@ -610,9 +610,9 @@ export class AgentHost {
     };
   }
 
-  private admitPrompt(target: AgentBackend | undefined, prompt: PenPrompt): PromptAdmission {
+  private admitPrompt(target: AgentBackend | undefined, prompt: PenPrompt, queue = false): PromptAdmission {
     if (target === undefined) return 'refused';
-    const canSteer = steers(target);
+    const canSteer = steers(target) && !queue;
     const slot = this.penSlot(target.cwd);
     const { outcome, sent } = this.penDispatch(target.cwd, {
       type: 'hold',
@@ -1078,6 +1078,7 @@ export class AgentHost {
         return { accepted: true };
       case 'prompt': {
         const answersQuestion = command.answersQuestion === true;
+        const queue = command.queue === true;
         const target = await this.restartIfStale(cwd);
         if (command.attachments !== undefined) {
           const admitted = [];
@@ -1110,7 +1111,7 @@ export class AgentHost {
           (prompt) =>
             answersQuestion && this.answerQuestion(target, prompt)
               ? 'sent'
-              : this.admitPrompt(target, prompt),
+              : this.admitPrompt(target, prompt, queue),
         );
         if (acceptance.accepted && handoffKey !== undefined) this.pendingHandoff.delete(handoffKey);
         if (starting !== undefined && target !== undefined) {
@@ -1222,6 +1223,12 @@ export class AgentHost {
         if (cwd === undefined) return { accepted: false };
         const outcome = this.penAction(cwd, { type: 'discard', penId: command.penId });
         return { accepted: outcome.kind === 'emptied' };
+      }
+      case 'pen.send': {
+        if (cwd === undefined || session === undefined) return { accepted: false };
+        if (session.isTurnLive && !steers(session)) return { accepted: false };
+        const { outcome, sent } = this.penDispatch(cwd, { type: 'send', penId: command.penId });
+        return { accepted: outcome.kind === 'send' && sent };
       }
     }
   }

@@ -476,6 +476,63 @@ describe('follow-ups steer the current turn by default (ONL-2623)', () => {
   });
 });
 
+describe('a follow-up chooses to steer or to queue', () => {
+  async function streaming(name: string) {
+    const made = await claudeHost(name, false);
+    await made.host.command({ type: 'prompt', text: 'first' }, made.cwd);
+    made.sdk.push(MESSAGE_START(), TEXT_START(), TEXT_DELTA('working'));
+    await drain();
+    return made;
+  }
+
+  it('a queued follow-up waits in the pen of a turn it could steer, and goes as the next turn', async () => {
+    const { host, cwd, sdk, events } = await streaming('claude-queue');
+
+    expect(await host.command({ type: 'prompt', text: 'then this', queue: true }, cwd)).toEqual({ accepted: true, held: true });
+    await drain();
+    expect(sdk.reached()).toEqual(['first']);
+    expect(host.pen(cwd)?.text).toBe('then this');
+
+    sdk.push(RESULT_OK);
+    await drain();
+    expect(sdk.reached()).toEqual(['first', 'then this']);
+    expect(ofType(events, 'turn.started')).toHaveLength(2);
+    expect(host.pen(cwd)).toBeNull();
+  });
+
+  it('Send now steers the queued prompt into the running turn', async () => {
+    const { host, cwd, sdk, events } = await streaming('claude-queue-send');
+    await host.command({ type: 'prompt', text: 'then this', queue: true }, cwd);
+    const penId = host.pen(cwd)?.penId ?? -1;
+
+    expect(await host.command({ type: 'pen.send', penId }, cwd)).toEqual({ accepted: true });
+    await drain();
+    expect(sdk.reached()).toEqual(['first', 'then this']);
+    expect(ofType(events, 'turn.started')).toHaveLength(1);
+    expect(ofType(events, 'message.user').at(-1)).toMatchObject({ text: 'then this', delivery: 'steering' });
+    expect(host.pen(cwd)).toBeNull();
+  });
+
+  it('Send now quoting a retired id sends nothing', async () => {
+    const { host, cwd, sdk } = await streaming('claude-queue-stale');
+    await host.command({ type: 'prompt', text: 'then this', queue: true }, cwd);
+    const penId = host.pen(cwd)?.penId ?? -1;
+
+    expect(await host.command({ type: 'pen.send', penId: penId + 1 }, cwd)).toEqual({ accepted: false });
+    expect(sdk.reached()).toEqual(['first']);
+    expect(host.pen(cwd)?.text).toBe('then this');
+  });
+
+  it('Send now is refused while a turn that cannot steer runs, and the prompt keeps waiting', async () => {
+    const { host, cwd, sdk } = await loaded('claude-queue-refuse');
+    const penId = host.pen(cwd)?.penId ?? -1;
+
+    expect(await host.command({ type: 'pen.send', penId }, cwd)).toEqual({ accepted: false });
+    expect(sdk.reached()).toEqual(['first']);
+    expect(host.pen(cwd)?.text).toBe('second');
+  });
+});
+
 describe('a message sent while setup runs joins it, framed for the agent (ONL-2961)', () => {
   it('Claude: steers the setup turn at once, carrying the during-setup framing the chat never shows', async () => {
     const { host, cwd, sdk, events } = await claudeHost('claude-setup-steer', false);
