@@ -13,6 +13,8 @@ export interface ChatSubmitRequest {
   artifacts?: readonly ArtifactAttachment[];
   /** Only the Project Chat composer sets it: an open question takes this send as its answer (ONL-2583). */
   answersQuestion?: boolean;
+  /** Waits for the turn to end instead of steering into it. */
+  queue?: boolean;
   /** Hidden from the chat; the model reads it beside the frame identity (ONL-2960). */
   context?: string;
 }

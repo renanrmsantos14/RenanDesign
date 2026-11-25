@@ -13,6 +13,7 @@ export interface PenRowStrings {
   labels: Record<PenLabel, string>;
   takeLabel: string;
   discardLabel: string;
+  sendLabel: string;
   attachmentsOnly: (count: number) => string;
 }
 
@@ -25,6 +26,7 @@ export function penRowStrings(agent: string): PenRowStrings {
     },
     takeLabel: t('chat.pen.take'),
     discardLabel: t('chat.pen.discard'),
+    sendLabel: t('chat.pen.send'),
     attachmentsOnly: (count) =>
       count === 1 ? t('chat.pen.attachment') : t('chat.pen.attachments', { count }),
   };

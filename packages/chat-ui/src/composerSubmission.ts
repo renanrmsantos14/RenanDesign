@@ -39,6 +39,28 @@ export function resolveComposerEnter(state: ComposerEnterState): ComposerEnterVe
   return canSubmitComposer(state.isConnected, state.text, state.hasPayload) ? 'send' : 'ignore';
 }
 
+export interface ComposerFollowUpState {
+  key: string;
+  shiftKey: boolean;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  isComposing: boolean;
+  keyCode: number;
+  isStreaming: boolean;
+  isEmpty: boolean;
+  canSendPen: boolean;
+}
+
+export type ComposerFollowUp = 'steer' | 'queue' | 'send-pen';
+
+/** Mid-turn, Enter steers and Mod+Enter queues; Mod+Enter on an empty composer sends the waiting prompt now. */
+export function resolveComposerFollowUp(state: ComposerFollowUpState): ComposerFollowUp {
+  const isModEnter = state.key === 'Enter' && !state.shiftKey && !state.isComposing && state.keyCode !== 229 && (state.metaKey || state.ctrlKey);
+  if (!state.isStreaming || !isModEnter) return 'steer';
+  if (state.isEmpty) return state.canSendPen ? 'send-pen' : 'steer';
+  return 'queue';
+}
+
 export interface ComposerRecallState {
   key: string;
   shiftKey: boolean;

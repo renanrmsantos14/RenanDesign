@@ -100,6 +100,7 @@ interface SendCanvas {
 
 /** The render the send was pressed in: what it carries is that render's, and so is what it clears. */
 export interface SendSurfaces {
+  queue?: boolean;
   unsupportedPdf: string | undefined;
   skill: Pick<SkillComposerHandle, 'standing' | 'selected' | 'setSelected' | 'onSendSettled' | 'onSendFailed'>;
   attachments: Pick<AttachmentsHandle, 'refs' | 'remove' | 'dismissFailure'>;
@@ -227,7 +228,7 @@ export function createChatSession(commit: (state: ChatSessionState) => void): Ch
       return saved;
     },
     put: (value) => set({ composerValue: value }),
-    send: async (text, { unsupportedPdf, skill, attachments, recall, submit, canvas }) => {
+    send: async (text, { queue, unsupportedPdf, skill, attachments, recall, submit, canvas }) => {
       if (unsupportedPdf !== undefined) return;
       if (skill.standing === 'gone') { set({ sendRejected: true }); return; }
       skill.onSendSettled();
@@ -237,7 +238,7 @@ export function createChatSession(commit: (state: ChatSessionState) => void): Ch
       // lands: a rejected one never reaches the disarm below (ONL-2482).
       canvas.dismissGatherRefusal();
       // `insertToken` leaves a no-break space after the token; the prompt carries a plain one.
-      const result = await submit({ text: text.replaceAll(' ', ' '), images: attachments.refs(), skills: skill.selected ? [skill.selected] : [], artifacts: recall.artifacts, answersQuestion: true });
+      const result = await submit({ text: text.replaceAll(' ', ' '), images: attachments.refs(), skills: skill.selected ? [skill.selected] : [], artifacts: recall.artifacts, answersQuestion: true, ...(queue === true ? { queue: true } : {}) });
       if (result.outcome !== 'accepted') {
         skill.onSendFailed();
         if (result.outcome === 'rejected' || result.outcome === 'failed') set({ sendRejected: true });

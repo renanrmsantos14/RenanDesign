@@ -1,3 +1,5 @@
+import type { MidTurnPolicy } from './events.js';
+
 export type PenVerdict = 'send' | 'hold';
 
 export type PenLabel = 'question' | 'working' | 'not-sent';
@@ -13,6 +15,11 @@ export function penLabel(live: PenLive): PenLabel {
   if (live.verdict === 'hold') return 'not-sent';
   if (live.needsAttention) return 'question';
   return live.isLive ? 'working' : 'not-sent';
+}
+
+/** Where main would refuse a `pen.send`: a live turn that cannot steer, or one paused on a question. */
+export function canSendPenNow(live: { isStreaming: boolean; midTurn: MidTurnPolicy; isQuestionOpen: boolean }): boolean {
+  return !live.isStreaming || (live.midTurn === 'steer' && !live.isQuestionOpen);
 }
 
 /** Two prompts the designer typed separately, read as one (ONL-2294). */

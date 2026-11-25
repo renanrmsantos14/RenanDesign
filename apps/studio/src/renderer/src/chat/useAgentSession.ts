@@ -118,7 +118,7 @@ export interface AgentSessionHandle {
     text: string,
     attachments?: PromptAttachment[],
     context?: string,
-    options?: { answersQuestion?: boolean; suggestion?: SuggestionSend; resends?: 'suggestion' },
+    options?: { answersQuestion?: boolean; queue?: boolean; suggestion?: SuggestionSend; resends?: 'suggestion' },
   ) => Promise<AgentCommandAcceptance>;
   interrupt: (cause?: InterruptCause) => void;
   dismissQuestion: () => Promise<AgentCommandAcceptance>;
@@ -411,13 +411,14 @@ export function useAgentSession(expectedCwd?: string): AgentSessionHandle {
   }, [itemCache, foldedState.touchedFiles]);
 
   const send = useCallback(
-    (text: string, attachments?: PromptAttachment[], context?: string, options?: { answersQuestion?: boolean; suggestion?: SuggestionSend; resends?: 'suggestion' }) =>
+    (text: string, attachments?: PromptAttachment[], context?: string, options?: { answersQuestion?: boolean; queue?: boolean; suggestion?: SuggestionSend; resends?: 'suggestion' }) =>
       command({
         type: 'prompt',
         text,
         ...(attachments?.length ? { attachments } : {}),
         ...(context !== undefined && context !== '' ? { context } : {}),
         ...(options?.answersQuestion === true ? { answersQuestion: true } : {}),
+        ...(options?.queue === true ? { queue: true } : {}),
         ...(options?.suggestion === undefined ? {} : { suggestion: options.suggestion }),
         ...(options?.resends === undefined ? {} : { resends: options.resends }),
       }),

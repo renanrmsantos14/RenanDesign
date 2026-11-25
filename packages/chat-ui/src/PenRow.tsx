@@ -9,6 +9,7 @@ import type { ChatPenStrings } from './strings.js';
 export interface PenActions {
   onTake: (penId: number) => void;
   onDiscard: (penId: number) => void;
+  onSend?: (penId: number) => void;
 }
 
 const PEN_REVEAL = `
@@ -31,14 +32,16 @@ export function PenRow({
   actions,
   icons,
   isLive,
+  canSendNow = false,
   needsAttention,
   attachments,
 }: {
   pen: PenView;
   strings: ChatPenStrings;
   actions: PenActions;
-  icons: { edit: ReactNode; discard: ReactNode };
+  icons: { edit: ReactNode; discard: ReactNode; send?: ReactNode };
   isLive: boolean;
+  canSendNow?: boolean;
   needsAttention: boolean;
   attachments?: ReactNode;
 }): ReactNode {
@@ -80,6 +83,17 @@ export function PenRow({
             background: 'var(--color-background-surface)',
           }}
         >
+          {canSendNow && actions.onSend !== undefined && icons.send !== undefined ? (
+            <IconButton
+              label={strings.sendLabel}
+              tooltip={strings.sendLabel}
+              icon={icons.send}
+              variant="ghost"
+              size="sm"
+              onClick={() => actions.onSend?.(pen.penId)}
+              data-testid="chat-pen-send"
+            />
+          ) : null}
           <IconButton
             label={strings.takeLabel}
             tooltip={strings.takeLabel}

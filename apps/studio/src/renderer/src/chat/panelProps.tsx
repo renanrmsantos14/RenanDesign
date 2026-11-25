@@ -183,5 +183,6 @@ export const PANEL_ICONS = {
   penIcons: {
     edit: <Icon icon={EditIcon} size="sm" color="inherit" />,
     discard: <Icon icon={TrashIcon} size="sm" color="inherit" />,
+    send: <Icon icon="arrowUp" size="sm" color="inherit" />,
   },
 } satisfies AsWritten<'chevronIcon' | 'artifactGlyph' | 'textGlyph' | 'fileGlyph' | 'retryIcon' | 'copyIcon' | 'closeIcon' | 'penIcons'>;

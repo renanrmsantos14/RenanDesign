@@ -29,6 +29,7 @@ export type PenAction =
   | { type: 'hold'; prompt: PenPrompt; isLive: boolean; turnId?: string }
   | { type: 'take'; penId: number }
   | { type: 'discard'; penId: number }
+  | { type: 'send'; penId: number }
   | { type: 'turnStarted'; turnId: string }
   /** Absent `isLive` reads as settled, so an ending and a falling edge in one step release here. */
   | { type: 'turnEnded'; turnId: string; stopReason?: string; isLive?: boolean }
@@ -170,6 +171,11 @@ export function reducePen(pen: PenState | null, action: PenAction): PenResult {
         return { pen: null, outcome: { kind: 'taken', prompt: prompt(pen) } };
       }
       return { pen: null, outcome: { kind: 'emptied', reason: 'discard' } };
+    }
+
+    case 'send': {
+      if (pen === null || pen.penId !== action.penId) return idle(pen);
+      return deliver(pen, 'immediate');
     }
 
     case 'turnStarted': {

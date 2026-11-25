@@ -3,6 +3,7 @@ import type { TranscriptItem } from '@studio/events';
 import {
   canSubmitComposer,
   resolveComposerEnter,
+  resolveComposerFollowUp,
   resolveComposerRecall,
   resolveComposerEscape,
   composerHistory,
@@ -213,5 +214,29 @@ describe('resolveComposerEscape', () => {
 
   it('answers only Escape', () => {
     expect(resolveComposerEscape({ ...running, key: 'Enter' })).toBe('ignore');
+  });
+});
+
+describe('resolveComposerFollowUp', () => {
+  const base = { key: 'Enter', shiftKey: false, metaKey: false, ctrlKey: false, isComposing: false, keyCode: 13, isStreaming: true, isEmpty: false, canSendPen: false };
+
+  it('steers on Enter and queues on Mod+Enter while a turn runs', () => {
+    expect(resolveComposerFollowUp(base)).toBe('steer');
+    expect(resolveComposerFollowUp({ ...base, metaKey: true })).toBe('queue');
+    expect(resolveComposerFollowUp({ ...base, ctrlKey: true })).toBe('queue');
+  });
+
+  it('queues nothing with no turn running', () => {
+    expect(resolveComposerFollowUp({ ...base, isStreaming: false, metaKey: true })).toBe('steer');
+  });
+
+  it('sends the waiting prompt on Mod+Enter from an empty composer', () => {
+    expect(resolveComposerFollowUp({ ...base, metaKey: true, isEmpty: true, canSendPen: true })).toBe('send-pen');
+    expect(resolveComposerFollowUp({ ...base, metaKey: true, isEmpty: true, canSendPen: false })).toBe('steer');
+  });
+
+  it('leaves an IME composition alone', () => {
+    expect(resolveComposerFollowUp({ ...base, metaKey: true, isComposing: true })).toBe('steer');
+    expect(resolveComposerFollowUp({ ...base, metaKey: true, keyCode: 229 })).toBe('steer');
   });
 });

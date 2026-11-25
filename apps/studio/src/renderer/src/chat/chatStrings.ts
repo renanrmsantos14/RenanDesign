@@ -4,6 +4,7 @@ import { t } from '@studio/i18n';
 import { failureStrings } from './failureStrings.js';
 import { penRowStrings } from './penRow.js';
 import { toolLineStrings } from './toolLineStrings.js';
+import { comboText } from '../shortcuts/combo.js';
 
 export function chatStrings(agent: string, harnessId: HarnessId | undefined, isStartingFresh: boolean): ChatStrings {
   return {
@@ -27,6 +28,7 @@ export function chatStrings(agent: string, harnessId: HarnessId | undefined, isS
     },
     composerPlaceholderDisconnected: t('chat.composer.disconnected', { agent }),
     composerPlaceholderQuestion: t('chat.composer.placeholderQuestion'),
+    composerPlaceholderRunning: t('chat.composer.placeholderRunning', { shortcut: comboText('mod+↩') }),
     composerPlaceholderSkill: t('chat.composer.placeholderSkill'),
     approvalPrompt: t('chat.approval.prompt', { agent }),
     questionSheet: {

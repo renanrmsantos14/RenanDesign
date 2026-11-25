@@ -493,3 +493,19 @@ describe('restoresOnRefusal', () => {
     expect(restoresOnRefusal('released', null)).toBe(true);
   });
 });
+
+describe('sending the waiting prompt now', () => {
+  it('delivers the prompt it names and empties the pen', () => {
+    const pen = held('Then the footer');
+    const result = reducePen(pen, { type: 'send', penId: pen.penId });
+    expect(result.pen).toBeNull();
+    expect(result.outcome).toMatchObject({ kind: 'send', cause: 'immediate', prompt: { text: 'Then the footer' } });
+    expect(restoresOnRefusal('immediate', pen)).toBe(true);
+  });
+
+  it('sends nothing for a retired id', () => {
+    const pen = held('Then the footer');
+    expect(reducePen(pen, { type: 'send', penId: pen.penId + 1 })).toEqual({ pen, outcome: { kind: 'none' } });
+    expect(reducePen(null, { type: 'send', penId: 1 })).toEqual({ pen: null, outcome: { kind: 'none' } });
+  });
+});

@@ -24,6 +24,7 @@ import { Tooltip } from '@astryxdesign/core/Tooltip';
 import { Text } from '@astryxdesign/core/Text';
 import {
   asksQuestion,
+  canSendPenNow,
   isRepairAskInPersonsWords,
   skillMentionRange,
   turnElapsed,
@@ -86,6 +87,7 @@ import {
   canSubmitComposer,
   isComposerConnected,
   resolveComposerEnter,
+  resolveComposerFollowUp,
   resolveComposerRecall,
   resolveComposerEscape,
   type ComposerWalk,
@@ -165,7 +167,7 @@ export interface ChatPanelProps {
   onRecallStateChange?: (isActive: boolean) => void;
   onRecallAction?: (stepsBack: number, hadAttachments: boolean, nextAction: PromptRecallNextAction) => void;
   onMessageAction?: (action: MessageAction, role: MessageActionRole) => void;
-  onSend: (text: string) => void | Promise<void>;
+  onSend: (text: string, options?: { queue?: boolean }) => void | Promise<void>;
   onResume?: (method: 'play-button' | 'enter') => void | Promise<void>;
   /** True when an image or element chip can form a prompt without text. */
   hasComposerPayload?: boolean;
@@ -227,7 +229,7 @@ export interface ChatPanelProps {
   copyIcon?: ReactNode;
   retryIcon?: ReactNode;
   /** The queued message's edit and discard glyphs; Astryx has neither. */
-  penIcons?: { edit: ReactNode; discard: ReactNode };
+  penIcons?: { edit: ReactNode; discard: ReactNode; send?: ReactNode };
   /** Sends the confirmed task on the agent's next-tasks card as the designer's own message (ONL-2899). */
   onNextTask?: (pick: NextTaskPick) => void;
   /** Keyed by the offer's `toolCallId`; an offer absent here has nothing picked (ONL-2977). */
@@ -463,6 +465,7 @@ const SEND_BUTTON_QUIET = {
 const PEN_ICON_FALLBACK = {
   edit: <Icon icon="moreHorizontal" size="sm" color="inherit" />,
   discard: <Icon icon="close" size="sm" color="inherit" />,
+  send: <Icon icon="arrowUp" size="sm" color="inherit" />,
 };
 
 export function ChatPanel({
@@ -614,6 +617,8 @@ export function ChatPanel({
   /* `paused` and `baseAt` do not move with the clock, so the row's own tick stays the only timer. */
   const turn = turnElapsed(state, Date.now());
   const isQuestionOpen = state.awaitingApproval.some((call) => asksQuestion(call.permission?.questions));
+  const canSendPen = canSendPenNow({ isStreaming: state.isStreaming, midTurn: state.midTurn, isQuestionOpen });
+  const steersMidTurn = state.isStreaming && state.midTurn === 'steer' && !isQuestionOpen;
   const nextTasks = useMemo(() => placeNextTasks(state.items, state.isStreaming), [state.items, state.isStreaming]);
   const sentTasks = useMemo(() => placeSentTasks(state.items, state.isStreaming), [state.items, state.isStreaming]);
   const setupSteps = useMemo(() => placeSetupSteps(state.items, state.isStreaming, setupLive, setupCanvas), [state.items, state.isStreaming, setupLive, setupCanvas]);
@@ -842,8 +847,9 @@ export function ChatPanel({
                 pen={state.pen}
                 strings={strings.pen}
                 actions={penActions}
-                icons={penIcons ?? PEN_ICON_FALLBACK}
+                icons={{ ...PEN_ICON_FALLBACK, ...penIcons }}
                 isLive={state.isStreaming}
+                canSendNow={canSendPen}
                 needsAttention={state.awaitingApproval.length > 0}
                 attachments={state.pen.attachments && state.pen.attachments.length > 0 ? (
                   <SubmittedAttachments
@@ -957,6 +963,8 @@ export function ChatPanel({
               ? strings.composerPlaceholderDisconnected
               : isQuestionOpen
                 ? strings.composerPlaceholderQuestion
+                : steersMidTurn
+                  ? strings.composerPlaceholderRunning
                 : hasComposerSkill === true
                   ? strings.composerPlaceholderSkill
                   : strings.composerPlaceholder
@@ -1029,6 +1037,22 @@ export function ChatPanel({
                   onInterrupt();
                   return;
                 }
+                const followUp = resolveComposerFollowUp({
+                  key: event.key,
+                  shiftKey: event.shiftKey,
+                  metaKey: event.metaKey,
+                  ctrlKey: event.ctrlKey,
+                  isComposing: event.nativeEvent.isComposing,
+                  keyCode: event.nativeEvent.keyCode,
+                  isStreaming: state.isStreaming,
+                  isEmpty: composerValue.trim() === '' && !hasComposerPayload,
+                  canSendPen: canSendPen && state.pen !== undefined && penActions?.onSend !== undefined,
+                });
+                if (followUp === 'send-pen') {
+                  event.preventDefault();
+                  if (!event.repeat && state.pen !== undefined) penActions?.onSend?.(state.pen.penId);
+                  return;
+                }
                 const verdict = resolveComposerEnter({
                   key: event.key,
                   shiftKey: event.shiftKey,
@@ -1042,7 +1066,7 @@ export function ChatPanel({
                 // Astryx's own Enter would submit and clear the editable behind this gate.
                 event.preventDefault();
                 finishRecall('send');
-                void onSend(composerValue.trim());
+                void onSend(composerValue.trim(), followUp === 'queue' ? { queue: true } : undefined);
               }}
             />
           }

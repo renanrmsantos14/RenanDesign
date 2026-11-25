@@ -855,7 +855,7 @@ export function ChatRegion(): React.JSX.Element {
         {
           send: (text, attachments, context) => sendWithChime(
             chimeWatch,
-            () => session.send(text, attachments, context, { answersQuestion: request.answersQuestion === true }),
+            () => session.send(text, attachments, context, { answersQuestion: request.answersQuestion === true, ...(request.queue === true ? { queue: true } : {}) }),
             request.answersQuestion === true && questionPending.current,
           ),
           inFlight,
@@ -1109,6 +1109,11 @@ export function ChatRegion(): React.JSX.Element {
           .agentCommand({ type: 'pen.discard', penId })
           .catch(ignoreRefusal('chat', 'pen discard'));
       },
+      onSend: (penId: number): void => {
+        void studio()
+          .agentCommand({ type: 'pen.send', penId })
+          .catch(ignoreRefusal('chat', 'pen send'));
+      },
     }),
     [takePen],
   );
@@ -1253,7 +1258,8 @@ export function ChatRegion(): React.JSX.Element {
           composerLayer: skillComposer.layer,
           isImageDropActive,
           composerStatus,
-          onSend: (text) => model.send(text, {
+          onSend: (text, options) => model.send(text, {
+            ...(options?.queue === true ? { queue: true } : {}),
             unsupportedPdf,
             skill: skillComposer,
             attachments,
