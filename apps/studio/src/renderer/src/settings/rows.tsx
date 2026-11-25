@@ -74,9 +74,10 @@ export interface AutoCompactRowProps {
 
 /** `''` clears the limit; anything else must land in the range before it leaves the row. */
 export function parseAutoCompactDraft(draft: string): number | null | undefined {
-  const text = draft.replace(/[\s,._]/g, '');
-  if (text === '') return null;
-  return /^\d+$/.test(text) ? validAutoCompactWindow(Number(text)) : undefined;
+  const trimmed = draft.trim();
+  if (trimmed === '') return null;
+  if (!/^(\d+|\d{1,3}([\s,._]\d{3})+)$/.test(trimmed)) return undefined;
+  return validAutoCompactWindow(Number(trimmed.replace(/\D/g, '')));
 }
 
 export function AutoCompactRow({ value, onChange, isSaving = false, saveFailed = false }: AutoCompactRowProps): React.JSX.Element {
@@ -87,6 +88,7 @@ export function AutoCompactRow({ value, onChange, isSaving = false, saveFailed =
     setInvalid(parsed === undefined);
     if (parsed !== undefined && parsed !== (value ?? null)) onChange(parsed);
   };
+  const error = isInvalid ? t('settings.autoCompact.invalid') : saveFailed ? t('settings.autoCompact.saveFailed') : undefined;
   return (
     <VStack gap={0} width="100%">
       <SettingsRow
@@ -109,8 +111,7 @@ export function AutoCompactRow({ value, onChange, isSaving = false, saveFailed =
           </div>
         }
       />
-      {isInvalid && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{t('settings.autoCompact.invalid')}</Text>}
-      {saveFailed && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{t('settings.autoCompact.saveFailed')}</Text>}
+      {error !== undefined && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{error}</Text>}
     </VStack>
   );
 }

@@ -148,7 +148,7 @@ function claudeChildSdkEnv(): Env | undefined {
   return withAutoCompactWindow(env === undefined ? undefined : pinClaudeConfigDir(env), autoCompactWindow());
 }
 
-/** Claude Code ranks this variable above the `autoCompactWindow` setting; with no captured env the child inherits `process.env`, so that is what it extends. */
+/** With no captured env the child inherits `process.env`, so that is what the variable extends. */
 export function withAutoCompactWindow(env: Env | undefined, window: number | undefined): Env | undefined {
   if (window === undefined) return env;
   return { ...(env ?? process.env), CLAUDE_CODE_AUTO_COMPACT_WINDOW: String(window) };
@@ -1008,7 +1008,6 @@ export class AgentSession {
       ...(this.opts.starter === undefined ? {} : { starter: this.opts.starter }),
     }), project.instructions].filter(Boolean).join('\n\n');
     const allowRules = [...this.allowRules];
-    const compactWindow = autoCompactWindow();
     // The CLI refuses a second spawn under a chosen id; a re-spawn resumes it (ONL-2196).
     const resume = this.opts.resume ?? this.spawnedSessionId;
     this.spawnedSessionId = resume ?? this.opts.sessionId;
@@ -1067,7 +1066,6 @@ export class AgentSession {
         ...(Object.keys(project.agents).length === 0 ? {} : { agents: project.agents }),
         // A `Read` deny also blocks `cat`/`head`/`grep` on the path, and nothing more: `sh -c "cat .env"` still reads it; a boundary needs `sandbox.enabled` (ONL-1921).
         settings: {
-          ...(compactWindow === undefined ? {} : { autoCompactWindow: compactWindow }),
           permissions: {
             deny: ['Read(./.env)', 'Read(./.env.*)', 'Read(**/.env)', 'Read(**/.env.*)'],
             ask: [...EXTERNALLY_VISIBLE_GIT_RULES, ...DESTRUCTIVE_GIT_RULES, 'mcp__studio__save_attachment'],

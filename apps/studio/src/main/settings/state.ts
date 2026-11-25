@@ -225,7 +225,7 @@ export function autoCompactWindow(): number | undefined {
 
 /** `null` clears it back to the agent's default; anything else outside the range throws. */
 export function setAutoCompactWindow(value: unknown): boolean {
-  const next = value === null ? undefined : validAutoCompactWindow(value);
+  const next = validAutoCompactWindow(value);
   if (value !== null && next === undefined) throw new Error('Invalid auto-compact window');
   if (autoCompactWindow() === next) return false;
   try {

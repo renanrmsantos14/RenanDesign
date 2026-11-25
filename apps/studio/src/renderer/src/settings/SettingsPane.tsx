@@ -63,7 +63,7 @@ export function SettingsSections({
         <DefaultAgentRow value={agent} readiness={readiness} onChange={onAgentChange} onSetUp={onSetUp} billingLabel={billingLabel} />
         {models !== undefined && <DefaultModelRow {...models} />}
         {effort !== undefined && <DefaultEffortRow {...effort} />}
-        {autoCompact !== undefined && <AutoCompactRow {...autoCompact} />}
+        {autoCompact !== undefined && <AutoCompactRow key={autoCompact.value ?? 'default'} {...autoCompact} />}
       </SettingsSection>
       {notifications !== undefined && <SettingsSection label={t('notifications.title')} testId="settings-section-notifications"><NotificationSettingsRow {...notifications} /></SettingsSection>}
       {analytics !== undefined && <SettingsSection label={t(analytics.consent === undefined ? 'settings.analytics.title' : 'telemetry.settings.section')} testId="settings-section-analytics"><AnalyticsRow {...analytics} /></SettingsSection>}

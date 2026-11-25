@@ -9,6 +9,6 @@ describe('parseAutoCompactDraft', () => {
     expect(parseAutoCompactDraft('300,000')).toBe(300_000);
     expect(parseAutoCompactDraft('100000')).toBe(100_000);
     expect(parseAutoCompactDraft('1000000')).toBe(1_000_000);
-    for (const bad of ['99999', '1000001', 'abc', '3e5', '-300000']) expect(parseAutoCompactDraft(bad)).toBeUndefined();
+    for (const bad of ['99999', '1000001', '100000.0', 'abc', '3e5', '-300000']) expect(parseAutoCompactDraft(bad)).toBeUndefined();
   });
 });

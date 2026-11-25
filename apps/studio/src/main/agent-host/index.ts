@@ -1176,8 +1176,9 @@ export class AgentHost {
         return { accepted: applied };
       }
       case 'session.compact': {
-        const accepted = (await session?.compact()) ?? false;
-        if (session !== undefined) recordContextCompactRequested({ harness, accepted });
+        if (session === undefined) return { accepted: false };
+        const accepted = await session.compact();
+        recordContextCompactRequested({ harness, accepted });
         return { accepted };
       }
       case 'interrupt': {
