@@ -172,6 +172,8 @@ export type PickerToGuest =
   /** Sent only from the diagnostics gate (ONL-2372). */
   | { type: 'pickPath'; selector: string; shiftHeld: boolean; generation: number }
   | { type: 'disarm'; generation: number }
+  /** A ⇧ hold into Interact: the guest hands the page its clicks without the ⇧. */
+  | { type: 'previewHold'; held: boolean; generation: number }
   /** Interact hides the outlines and keeps the selection (ONL-2455) — never `clearSelections`, which takes the `held` bookkeeping with it. */
   | { type: 'outlineVisibility'; visible: boolean; generation: number }
   /** Sent only while the diagnostics gate is open (ONL-2455): a shipped build never sends it, so the guest reports no hover. */

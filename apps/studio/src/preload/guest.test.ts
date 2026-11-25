@@ -12,7 +12,7 @@ if (!build.success) throw new AggregateError(build.logs, 'Guest preload test bun
 const source = await build.outputs[0]!.text();
 
 /** `mintsHtml` is the one thing the two document families differ by: an XML document's element carries no `style` (ONL-2835). */
-function guest(mintsHtml: boolean) {
+function guest(mintsHtml: boolean, globals: Record<string, unknown> = {}) {
   const messages: unknown[] = [];
   const listeners = new Map<string, (...args: unknown[]) => void>();
   // A real document hands an event to every listener for it, and guest.ts registers two for 'pagehide'.
@@ -63,6 +63,7 @@ function guest(mintsHtml: boolean) {
     setTimeout: (callback: () => void) => { timers.push(callback); return timers.length; },
     clearTimeout() {},
     process: { env: {} },
+    ...globals,
   });
   return {
     messages, roots, documentEvents,
@@ -137,6 +138,49 @@ describe('guest preload in a document that mints HTML elements', () => {
     let prevented = false;
     frame.dispatch('mousedown', { preventDefault: () => { prevented = true; }, stopPropagation() {}, stopImmediatePropagation() {} });
     expect(prevented).toBe(true);
+    expect(frame.messages).toEqual([]);
+  });
+});
+
+describe('a held ⇧ preview', () => {
+  class FakeElement {
+    received: { type: string; shiftKey: boolean }[] = [];
+    focused = false;
+    closest() { return { focus: () => { this.focused = true; } }; }
+    dispatchEvent(event: { type: string; shiftKey: boolean }) { this.received.push({ type: event.type, shiftKey: event.shiftKey }); return true; }
+  }
+  class FakeMouseEvent {
+    isTrusted = true;
+    defaultPrevented = false;
+    stopped = false;
+    target: unknown;
+    constructor(public type: string, init: { shiftKey?: boolean; target?: unknown } = {}) {
+      Object.assign(this, { ctrlKey: false, metaKey: false, altKey: false, shiftKey: false }, init);
+    }
+    preventDefault() { this.defaultPrevented = true; }
+    stopImmediatePropagation() { this.stopped = true; }
+  }
+  class FakePointerEvent extends FakeMouseEvent {}
+  const globals = { Element: FakeElement, MouseEvent: FakeMouseEvent, PointerEvent: FakePointerEvent };
+
+  it('hands the page its click without the ⇧, and leaves it alone once the hold ends', () => {
+    const frame = guest(true, globals);
+    const target = new FakeElement();
+    frame.receive({ type: 'previewHold', held: true, generation: 0 });
+
+    const click = new FakeMouseEvent('click', { shiftKey: true, target });
+    frame.dispatch('click', click);
+    const down = new FakeMouseEvent('mousedown', { shiftKey: true, target });
+    frame.dispatch('mousedown', down);
+
+    expect(click.defaultPrevented && click.stopped).toBe(true);
+    expect(target.received).toEqual([{ type: 'click', shiftKey: false }, { type: 'mousedown', shiftKey: false }]);
+    expect(target.focused).toBe(true);
+
+    frame.receive({ type: 'previewHold', held: false, generation: 0 });
+    const later = new FakeMouseEvent('click', { shiftKey: true, target });
+    frame.dispatch('click', later);
+    expect(later.stopped).toBe(false);
     expect(frame.messages).toEqual([]);
   });
 });
