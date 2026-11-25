@@ -126,7 +126,8 @@ export function createUpdateSession(
     restart(): void {
       if (!machine.canRestart()) return;
       if (!busy && !machine.isStaging()) void session.check();
-      machine.restart(() => updater.quitAndInstall());
+      // Without isSilent the NSIS assisted installer shows its whole wizard, which reads as a reinstall.
+      machine.restart(() => updater.quitAndInstall(true, true));
     },
     dispose(): void {
       lifetime.abort();
