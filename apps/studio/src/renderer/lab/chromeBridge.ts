@@ -169,6 +169,7 @@ const bridge: StudioChromeBridge = {
     return () => window.clearInterval(timer);
   },
   updateRestart: () => undefined,
+  updateCheck: () => undefined,
   appCommands: async () => APP_COMMAND_ORDER,
   runAppCommand: () => undefined,
   runHelpAction: () => undefined,
