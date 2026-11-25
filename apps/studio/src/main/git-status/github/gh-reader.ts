@@ -174,7 +174,7 @@ export type RollupItem =
   | { __typename: 'StatusContext'; state?: string }
   | { __typename?: string };
 
-const FAILING_CONCLUSIONS = new Set(['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED', 'STARTUP_FAILURE']);
+export const FAILING_CONCLUSIONS = new Set(['FAILURE', 'TIMED_OUT', 'CANCELLED', 'ACTION_REQUIRED', 'STARTUP_FAILURE']);
 
 export function reduceChecks(rollup: RollupItem[] | null | undefined): GitChecksRollup {
   if (!rollup || rollup.length === 0) return 'none';

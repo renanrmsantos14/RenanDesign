@@ -111,6 +111,10 @@ export class TabHost {
     return this.pieces.book.openTabCount;
   }
 
+  selectedWorkspace(tabId: string): string | undefined {
+    return tabId === this.pieces.book.selectedId ? this.pieces.book.tabById(tabId)?.workspacePath : undefined;
+  }
+
   tabForWorkspace(workspacePath: string): string | undefined {
     return this.pieces.book.tabForWorkspace(workspacePath);
   }

@@ -39,6 +39,9 @@ export interface GitStatusPillProps {
   /** An action of this pill's own is waiting in main's pen; the press takes it back (ONL-2379). */
   isQueued?: boolean;
   onOpenPr?: (url: string) => void;
+  /** Set, the PR cell opens this beside the pill instead of the browser. */
+  prPanel?: ReactNode;
+  onPrPanelOpenChange?: (isOpen: boolean) => void;
   onPick?: (option: GitDropdownOption) => void;
   className?: string;
   testId?: string;
@@ -286,6 +289,65 @@ function Reveal({
   );
 }
 
+function PrPanelControl({
+  panel,
+  label,
+  isReachable,
+  onOpenChange,
+  onHover,
+  style,
+  children,
+}: {
+  panel: ReactNode;
+  label: string;
+  isReachable: boolean;
+  onOpenChange: (isOpen: boolean) => Promise<void>;
+  onHover: (isHovered: boolean) => void;
+  style: CSSProperties;
+  children: ReactNode;
+}): React.JSX.Element {
+  const openingRef = useRef(false);
+  const handleHide = useCallback(() => {
+    void onOpenChange(false);
+  }, [onOpenChange]);
+  const popover = usePopover({ ...POPOVER_OPTIONS, onHide: handleHide });
+  const open = async (): Promise<void> => {
+    openingRef.current = true;
+    try {
+      await onOpenChange(true);
+    } finally {
+      openingRef.current = false;
+    }
+    popover.show();
+  };
+  return (
+    <>
+      <button
+        type="button"
+        ref={popover.triggerRef}
+        className={CELL_CLASS}
+        data-interactive="true"
+        aria-label={label}
+        aria-haspopup="dialog"
+        aria-expanded={popover.isOpen}
+        data-testid="git-status-pr-link"
+        {...(isReachable ? {} : { tabIndex: -1, 'aria-hidden': 'true' as const })}
+        onClick={() => {
+          if (openingRef.current) return;
+          if (popover.isOpen) popover.hide();
+          else void open();
+        }}
+        onMouseEnter={() => onHover(true)}
+        onMouseLeave={() => onHover(false)}
+        style={style}
+      >
+        {children}
+      </button>
+      {popover.render(panel, { placement: 'below', alignment: 'end' })}
+    </>
+  );
+}
+
 /** The split button's second control: its own focusable button, so the keyboard reaches the dropdown without the body. */
 function DropdownControl({
   id,
@@ -416,6 +478,8 @@ export function GitStatusPill({
   onNoActionPress,
   isQueued = false,
   onOpenPr,
+  prPanel,
+  onPrPanelOpenChange,
   onPick,
   className,
   testId,
@@ -543,6 +607,22 @@ export function GitStatusPill({
         </span>
       );
     const openPr = revealPr;
+    if (prPanel !== undefined)
+      return (
+        <PrPanelControl
+          panel={prPanel}
+          label={fill(strings.openPrAria, { number: openPr.number })}
+          isReachable={hasPrSegment}
+          onOpenChange={async (isOpen) => {
+            onPrPanelOpenChange?.(isOpen);
+            await handleMenuOpenChange(isOpen);
+          }}
+          onHover={setIsPrHovered}
+          style={cellStyle(true, prStart, prEnd)}
+        >
+          {prSegment}
+        </PrPanelControl>
+      );
     return (
       <button
         type="button"

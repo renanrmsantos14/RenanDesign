@@ -952,6 +952,17 @@ export interface TelemetryEventMap {
 
   git_pill_outcome: Forwarded<'git_pill_outcome'>;
 
+  git_pr_panel_listed: {
+    project_id?: string;
+    outcome: 'ok' | 'no-github' | 'failed';
+    pull_count: number;
+  };
+
+  git_pr_merged: {
+    project_id?: string;
+    outcome: 'ok' | 'not-mergeable' | 'failed';
+  };
+
   /** One of the application's own commands, from whichever menu or key asked (ONL-3127). */
   app_command_run: {
     command: AppCommand;

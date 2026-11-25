@@ -14,6 +14,8 @@ import type {
 import type {
   GitPillDefaults,
   GitPillDefaultsPatch,
+  GitMergeResult,
+  GitPullRequestList,
   GitStatusChange,
   GitStatusList,
 } from './git-status.js';
@@ -203,6 +205,9 @@ export const CHANNELS = {
     listGitStatus: { name: 'git-status:list', from: TAB, request: none, response: of<GitStatusList>(), tab: 'listGitStatus' },
     gitPillDefaults: { name: 'git-status:defaults', from: TAB, request: none, response: of<GitPillDefaults>(), tab: 'gitPillDefaults' },
     setGitPillDefault: { name: 'git-status:set-default', from: TAB, request: one<GitPillDefaultsPatch>(), response: of<GitPillDefaults>(), tab: 'setGitPillDefault' },
+    /** Answers only for the selected Tab's Project. */
+    gitPullRequests: { name: 'git-status:pull-requests', from: CHROME, request: fields<{ tabId: string }>()('tabId'), response: of<GitPullRequestList>(), chrome: 'gitPullRequests' },
+    gitMerge: { name: 'git-status:merge', from: CHROME, request: fields<{ tabId: string; number: number }>()('tabId', 'number'), response: of<GitMergeResult>(), chrome: 'gitMerge' },
     /** This and `agent:probe` answer a view with no Project too: the connection verdict is the machine's. */
     agentSnapshot: { name: 'agent:snapshot', from: TAB, scope: 'project-or-none', request: optional<AgentSnapshotRequest>(), response: of<AgentSnapshot>(), tab: 'agentSnapshot' },
     agentProbe: { name: 'agent:probe', from: TAB, scope: 'project-or-none', request: optional<AgentProbeRequest>(), response: of<AgentConnection>(), tab: 'agentProbe' },

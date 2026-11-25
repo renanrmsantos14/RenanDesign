@@ -1,4 +1,4 @@
-import { StrictMode, useEffect, useState } from 'react';
+import { StrictMode, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import type { ChromeSlotAction, ChromeSlotsPush, TabPreview, TabsState } from '@studio/events';
 import type { GitDropdownOption } from '@studio/git-ui';
@@ -62,6 +62,15 @@ function Chrome(): React.JSX.Element {
     ...(tab.health === undefined ? {} : { health: tab.health }),
   }));
 
+  const gitTabId = projection.tabId;
+  const gitPullRequests = useMemo(
+    () => ({
+      load: () => window.studioChrome.gitPullRequests(gitTabId),
+      merge: (number: number) => window.studioChrome.gitMerge(gitTabId, number),
+    }),
+    [gitTabId],
+  );
+
   const act = (action: ChromeSlotAction): void => {
     if (sendsSlotAction(action, { activeId, projectedTabId: projection.tabId })) {
       window.studioChrome.action(action);
@@ -89,6 +98,7 @@ function Chrome(): React.JSX.Element {
       onReloadTab={(id) => window.studioChrome.reloadTab(id)}
       onPreviewTab={previewTab}
       slots={slots}
+      gitPullRequests={gitPullRequests}
       onFolder={() => act({ tabId: activeId, slot: 'folder' })}
       onToggleRail={(side) => act({ tabId: activeId, slot: 'rail', side })}
       onGitAction={() => act({ tabId: activeId, slot: 'git', kind: 'action' })}

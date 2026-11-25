@@ -21,6 +21,7 @@ import { useChromeExpansion, useHoverExpansion } from './expansion.js';
 import { TabStrip } from './tabs/TabStrip.js';
 import type { StudioTab } from './tabs/Tab.js';
 import { UpdatePill } from './UpdatePill.js';
+import { useGitPrPanel, type GitPrPanelSource } from './GitPrPanel.js';
 import { AppMenu, APP_MENU_LOOK } from './AppMenu.js';
 import { StatusDot } from './StatusDot.js';
 import { LAYER } from '../overlay/layers.js';
@@ -104,6 +105,7 @@ export interface TopBarProps {
   onToggleRail: (side: 'left' | 'right') => void;
   onGitAction: () => void;
   onGitPick: (option: GitDropdownOption) => void;
+  gitPullRequests?: GitPrPanelSource;
 }
 
 export function BandIconButton({
@@ -219,9 +221,10 @@ function RailToggle({
 }
 
 function ProjectedGitPill({
-  git, onAction, onPick, corner = PILL_CORNER,
+  git, onAction, onPick, pullRequests, corner = PILL_CORNER,
 }: {
   git: NonNullable<ChromeSlots['git']>;
+  pullRequests?: GitPrPanelSource;
   corner?: number | string;
   onAction: () => void;
   onPick: (option: GitDropdownOption) => void;
@@ -233,6 +236,7 @@ function ProjectedGitPill({
   const tooltip = useMemo(() => tooltipFor(git.row), [git.row]);
   const hover = useHoverExpansion();
   const menu = useChromeExpansion();
+  const prPanel = useGitPrPanel(pullRequests);
   if (!drawsPill(git.row)) return null;
   const leading = leadingFor(state.id);
   const glyphs = leading ? { ...GIT_PILL_GLYPHS, leading } : GIT_PILL_GLYPHS;
@@ -251,6 +255,7 @@ function ProjectedGitPill({
         onNoActionPress={onAction}
         isQueued={git.queuedAction !== undefined}
         onOpenPr={(url) => window.open(url, '_blank', 'noopener')}
+        {...(prPanel.panel === undefined ? {} : { prPanel: prPanel.panel, onPrPanelOpenChange: prPanel.onOpenChange })}
         onPick={onPick}
         className="region-no-drag"
         testId="topbar-git-status"
@@ -300,7 +305,7 @@ function WindowEnd({ appMenu, hasRule }: { appMenu: ReactNode; hasRule: boolean 
 
 export function TopBarView({
   tabs, activeTabId, onSelectTab, onCloseTab, onNewTab, onNewDraft, canReopen = false, onReopenTab, onRenameTab, onReloadTab, onPreviewTab,
-  onReorderTab, canCreate, isHome, isCreatingDraft = false, isWindowFocused = true, isChordHintHeld = false, windowControls = 'leading', slots, onFolder, onToggleRail, onGitAction, onGitPick, update,
+  onReorderTab, canCreate, isHome, isCreatingDraft = false, isWindowFocused = true, isChordHintHeld = false, windowControls = 'leading', slots, onFolder, onToggleRail, onGitAction, onGitPick, gitPullRequests, update,
   appMenu = null,
 }: TopBarProps & { update: ReactNode; appMenu?: ReactNode }): React.JSX.Element {
   const [isTabDragging, setIsTabDragging] = useState(false);
@@ -390,6 +395,7 @@ export function TopBarView({
             git={slots.git}
             onAction={onGitAction}
             onPick={onGitPick}
+            {...(gitPullRequests === undefined ? {} : { pullRequests: gitPullRequests })}
             corner={windowControls === 'trailing' ? PILL_CORNER_EVEN : PILL_CORNER}
           />
         ) : null}
