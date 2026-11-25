@@ -355,13 +355,13 @@ describe('asking before an update', () => {
     expect(updater.installs).toEqual(['1.2.3']);
   });
 
-  it('installs silently and relaunches, so the update never shows the installer wizard', async () => {
+  it('runs the installer visibly and relaunches, so its progress bar shows while the app is closed', async () => {
     const { updater, session } = asking(true);
     const check = session.check();
     while (updater.finishDownload === undefined) await Promise.resolve();
     updater.finishDownload();
     await check;
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(updater.installArgs).toEqual([[true, true]]);
+    expect(updater.installArgs).toEqual([[false, true]]);
   });
 });

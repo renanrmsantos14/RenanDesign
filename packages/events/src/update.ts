@@ -34,6 +34,11 @@ export interface UpdateOffer {
   notes: ReleaseNote[];
 }
 
+/** The version a restart-to-update installed, handed to the first Tab that asks after the relaunch. */
+export interface UpdateApplied {
+  version: string;
+}
+
 export interface UpdateAnswer {
   version: string;
   accept: boolean;

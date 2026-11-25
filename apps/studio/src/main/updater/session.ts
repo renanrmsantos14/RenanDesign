@@ -126,8 +126,8 @@ export function createUpdateSession(
     restart(): void {
       if (!machine.canRestart()) return;
       if (!busy && !machine.isStaging()) void session.check();
-      // Without isSilent the NSIS assisted installer shows its whole wizard, which reads as a reinstall.
-      machine.restart(() => updater.quitAndInstall(true, true));
+      // Not silent: build/installer.nsh skips every page but the progress bar on an update, and that bar is the only feedback while the app is closed.
+      machine.restart(() => updater.quitAndInstall(false, true));
     },
     dispose(): void {
       lifetime.abort();

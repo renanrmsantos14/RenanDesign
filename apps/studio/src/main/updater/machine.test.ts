@@ -259,6 +259,17 @@ describe('restart to update', () => {
     expect(machine.restart(() => (installs += 1))).toBe(false);
     expect(installs).toBe(1);
   });
+
+  it('shows restarting for the install delay before it quits to install', async () => {
+    let installs = 0;
+    const machine = new UpdateMachine({ emit: () => {}, installDelayMs: 20 });
+    machine.downloaded('1.2.3');
+    machine.restart(() => { installs += 1; });
+    expect(machine.current()).toEqual({ status: 'downloaded', version: '1.2.3', restarting: true });
+    expect(installs).toBe(0);
+    await waitFor(() => installs === 1, 'the delayed install');
+    machine.dispose();
+  });
 });
 
 describe('a waiting update', () => {

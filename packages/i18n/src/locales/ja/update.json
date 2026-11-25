@@ -11,5 +11,16 @@
   "update.prompt.empty": "このバージョンには内部的な変更のみが含まれています。",
   "update.prompt.restartNote": "ダウンロードが終わると RenanDesign が再起動します。",
   "update.prompt.now": "今すぐアップデート",
-  "update.prompt.later": "あとで"
+  "update.prompt.later": "あとで",
+  "update.progress.downloading": "アップデートをダウンロード中",
+  "update.progress.installing": "アップデートをインストール中",
+  "update.progress.failed": "アップデートを完了できませんでした",
+  "update.progress.version": "バージョン {version}",
+  "update.progress.bar": "アップデートの進行状況",
+  "update.progress.downloadingDetail": "作業はそのまま続けられます。ダウンロードが終わると RenanDesign が再起動します。",
+  "update.progress.installingDetail": "バージョン {version} をインストールするため、RenanDesign を終了します。数秒後に自動で再び開きます。",
+  "update.progress.failedDetail": "このバージョンはあとで改めて案内されます。作業内容は失われません。",
+  "update.progress.hide": "隠す",
+  "update.progress.close": "閉じる",
+  "update.applied": "RenanDesign がバージョン {version} になりました"
 }

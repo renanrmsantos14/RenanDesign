@@ -30,6 +30,7 @@ import { ReportDialog } from './report/ReportDialog.js';
 import { SettingsDialog } from './settings/SettingsDialog.js';
 import { openSettings } from './settings/settingsDialogStore.js';
 import { UpdateOfferDialog } from './update/UpdateOfferDialog.js';
+import { useUpdateApplied } from './update/useUpdateApplied.js';
 import { primeSettings, useSettingsStore } from './settings/store.js';
 import { ConsentGate } from './telemetry/Consent.js';
 import { primeGitStatus, watchOpenWorktree } from './git-status/store.js';
@@ -64,6 +65,7 @@ const AccessBoundary = capable('account') ? lazy(() => import('./cloud/AccessBou
 
 export function Root(): React.JSX.Element {
   useTabNotices();
+  useUpdateApplied();
   const consent = useSettingsStore((state) => state.telemetryConsent);
   const needsConsent = import.meta.env.RENDERER_VITE_ONLOOK_CLOUD === 'false'
     && import.meta.env.RENDERER_VITE_TELEMETRY !== 'false'
