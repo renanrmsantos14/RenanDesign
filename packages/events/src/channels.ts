@@ -123,7 +123,7 @@ import type { DebugAgentFrames, DebugAgentFramesRequest, DebugCaptureFrame, Debu
 import type { CaptureViewAnswer, CaptureViewRequest } from './capture-view.js';
 import type { CodexSetupState } from './codex.js';
 import type { ClaudeSetupState, ClaudeStatusRequest, SetupEntryPoint } from './claude-setup.js';
-import type { UpdateAnswer, UpdateOffer, UpdateState } from './update.js';
+import type { UpdateAnswer, UpdateApplied, UpdateOffer, UpdateState } from './update.js';
 import type {
   BlankCreateResult,
   BlankCreateStage,
@@ -220,6 +220,7 @@ export const CHANNELS = {
     onboardingComplete: { name: 'onboarding:complete', from: TAB, request: optional<OnboardingCompletion>(), response: of<void>(), tab: 'onboardingComplete' },
     updateStatus: { name: 'update:status', from: ANY, request: none, response: of<UpdateState>(), tab: 'updateStatus', chrome: 'updateStatus' },
     updateOffer: { name: 'update:offer', from: TAB, request: none, response: of<UpdateOffer | null>(), tab: 'updateOffer' },
+    updateApplied: { name: 'update:applied', from: TAB, request: none, response: of<UpdateApplied | null>(), tab: 'updateApplied' },
     codexStatus: { name: 'codex:status', from: TAB, request: none, response: of<CodexSetupState>(), tab: 'codexStatus' },
     /** Idempotent; a call while one runs joins it. Resolves on acceptance. */
     codexInstall: { name: 'codex:install', from: TAB, request: none, response: of<{ accepted: boolean }>(), tab: 'codexInstall' },

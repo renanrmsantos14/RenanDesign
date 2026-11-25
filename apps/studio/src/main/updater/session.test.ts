@@ -46,7 +46,11 @@ class UpdateFixture extends EventEmitter {
     });
     return [];
   };
-  quitAndInstall = () => { this.installs.push(this.stagedVersion ?? 'missing'); };
+  installArgs: Array<[boolean | undefined, boolean | undefined]> = [];
+  quitAndInstall = (isSilent?: boolean, isForceRunAfter?: boolean) => {
+    this.installArgs.push([isSilent, isForceRunAfter]);
+    this.installs.push(this.stagedVersion ?? 'missing');
+  };
 }
 
 const sessions: Array<ReturnType<typeof createUpdateSession>> = [];
@@ -349,5 +353,15 @@ describe('asking before an update', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(updater.downloads).toEqual(['1.2.3']);
     expect(updater.installs).toEqual(['1.2.3']);
+  });
+
+  it('runs the installer visibly and relaunches, so its progress bar shows while the app is closed', async () => {
+    const { updater, session } = asking(true);
+    const check = session.check();
+    while (updater.finishDownload === undefined) await Promise.resolve();
+    updater.finishDownload();
+    await check;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(updater.installArgs).toEqual([[false, true]]);
   });
 });

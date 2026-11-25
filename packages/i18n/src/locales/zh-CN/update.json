@@ -11,5 +11,16 @@
   "update.prompt.empty": "此版本仅包含内部改动。",
   "update.prompt.restartNote": "下载完成后，RenanDesign 将重新启动。",
   "update.prompt.now": "立即更新",
-  "update.prompt.later": "稍后"
+  "update.prompt.later": "稍后",
+  "update.progress.downloading": "正在下载更新",
+  "update.progress.installing": "正在安装更新",
+  "update.progress.failed": "更新未能完成",
+  "update.progress.version": "版本 {version}",
+  "update.progress.bar": "更新进度",
+  "update.progress.downloadingDetail": "你可以继续工作。下载完成后，RenanDesign 将重新启动。",
+  "update.progress.installingDetail": "RenanDesign 正在关闭以安装版本 {version}，几秒钟后会自动重新打开。",
+  "update.progress.failedDetail": "RenanDesign 稍后会再次提供此版本。你的工作不会丢失。",
+  "update.progress.hide": "隐藏",
+  "update.progress.close": "关闭",
+  "update.applied": "RenanDesign 已更新到版本 {version}"
 }

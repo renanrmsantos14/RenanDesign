@@ -15,6 +15,7 @@ export interface UpdateMachineOptions {
   shownAfterFailures?: number;
   waitForNativeStage?: boolean;
   restartTimeoutMs?: number;
+  installDelayMs?: number;
   onInstallFailure?: (error: Error) => void;
 }
 
@@ -33,6 +34,7 @@ export class UpdateMachine {
   private staging = false;
   private heldInstall: (() => void) | undefined;
   private restartTimer: NodeJS.Timeout | undefined;
+  private installTimer: NodeJS.Timeout | undefined;
 
   constructor(private readonly options: UpdateMachineOptions) {
     this.emit = options.emit;
@@ -108,6 +110,7 @@ export class UpdateMachine {
     this.staging = false;
     this.heldInstall = undefined;
     clearTimeout(this.restartTimer);
+    clearTimeout(this.installTimer);
     const requested = this.requested;
     this.failures += 1;
     if (installFailed || isDiskFull(message) || requested || this.failures >= this.shownAfterFailures) {
@@ -150,6 +153,7 @@ export class UpdateMachine {
     this.stopPeriodicChecks();
     clearTimeout(this.lingerTimer);
     clearTimeout(this.restartTimer);
+    clearTimeout(this.installTimer);
   }
 
   private finishRestart(): void {
@@ -158,11 +162,16 @@ export class UpdateMachine {
     this.heldInstall = undefined;
     this.restartTimer = setTimeout(() => this.installFailed(new Error('Restarting to install the update timed out.')), this.options.restartTimeoutMs ?? 30_000);
     this.restartTimer.unref?.();
-    try {
-      install();
-    } catch (error) {
-      this.installFailed(error instanceof Error ? error : new Error(String(error)));
-    }
+    const run = (): void => {
+      try {
+        install();
+      } catch (error) {
+        this.installFailed(error instanceof Error ? error : new Error(String(error)));
+      }
+    };
+    const delay = this.options.installDelayMs ?? 0;
+    if (delay > 0) this.installTimer = setTimeout(run, delay);
+    else run();
   }
 
   private installFailed(error: Error): void {

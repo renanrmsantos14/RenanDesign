@@ -2,13 +2,14 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import electron, { app } from 'electron';
 import { handle, on } from '../ipc/bridge.js';
-import { IPC_EMIT, IPC_INVOKE, IPC_SEND, parseReleaseNotes, type UpdateAnswer, type UpdateOffer, type UpdateState } from '@studio/events';
+import { IPC_EMIT, IPC_INVOKE, IPC_SEND, parseReleaseNotes, type UpdateAnswer, type UpdateApplied, type UpdateOffer, type UpdateState } from '@studio/events';
 import type { AppUpdater, UpdateInfo } from 'electron-updater';
 import { broadcastToRenderers } from '../tabs/broadcast.js';
 import { reportUpdateFailure } from './check.js';
 import { createUpdateSession } from './session.js';
 import { installUpdateProof } from './proof.js';
 import { UpdateMachine } from './machine.js';
+import { recordInstalling, takePendingInstall } from './applied.js';
 import { log } from '../log/index.js';
 import { capabilities } from '../cloud/capabilities.js';
 import { SELF_UPDATE } from '../build-kind.js';
@@ -28,12 +29,13 @@ const listeners = new Set<(next: UpdateState) => void>();
 
 const machine = new UpdateMachine({
   waitForNativeStage: isMac(),
-  ...(SELF_UPDATE ? { checkIntervalMs: 2 * 60 * 1000 } : {}),
+  ...(SELF_UPDATE ? { checkIntervalMs: 2 * 60 * 1000, installDelayMs: 2_000 } : {}),
   onInstallFailure: (error) => {
     logger.warn('install failed', { error });
     reportUpdateFailure('install', error);
   },
   emit: (next) => {
+    if (next.restarting && next.version !== undefined) recordInstalling(next.version);
     broadcastToRenderers(IPC_EMIT.updateState, next);
     for (const listener of listeners) listener(next);
   },
@@ -77,7 +79,14 @@ function readFeedConfig(): FeedConfig | undefined {
 
 /** Called before `createWindow()`: the renderer asks `update:status` at mount. */
 export function registerUpdaterHandlers(): void {
+  let applied = takePendingInstall(app.getVersion());
+  if (applied) logger.info('update applied', { version: applied.version });
   handle(IPC_INVOKE.updateStatus, (): UpdateState => machine.current());
+  handle(IPC_INVOKE.updateApplied, (): UpdateApplied | null => {
+    const once = applied;
+    applied = null;
+    return once;
+  });
   on(IPC_SEND.updateRestart, () => restartToUpdate());
   on(IPC_SEND.updateCheck, () => void checkForUpdatesNow());
   handle(IPC_INVOKE.updateOffer, (): UpdateOffer | null => pending?.offer ?? null);
