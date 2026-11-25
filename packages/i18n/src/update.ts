@@ -15,7 +15,7 @@ export const UPDATE_PRESENTATION = {
     menu: { key: 'menu.update.checking', enabled: false },
     pill: 'topbar.update.checking',
   },
-  available: { menu: { key: 'menu.update.found', enabled: false }, pill: 'topbar.update.available' },
+  available: { menu: { key: 'menu.update.found', enabled: true }, pill: 'topbar.update.available' },
   downloading: {
     menu: { key: 'menu.update.downloadingPercent', enabled: false },
     pill: 'topbar.update.downloading',
