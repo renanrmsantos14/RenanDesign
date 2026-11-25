@@ -157,6 +157,7 @@ function fakeSession(
     ...(options.transcriptPath === undefined ? {} : { transcriptPath: options.transcriptPath }),
     eventsSince: () => [],
     welcome: () => {},
+    compact: async () => false,
     open: () => {
       opens += 1;
     },

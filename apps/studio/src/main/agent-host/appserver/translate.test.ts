@@ -890,3 +890,10 @@ describe('a codex retry raises the notice a Claude retry raises (ONL-2491)', () 
     expect(foldSessionState(recovered).retrying).toBeUndefined();
   });
 });
+
+describe('a context compaction item', () => {
+  it('announces the compaction once it completes', () => {
+    const { events } = drive([turnStarted, completed({ type: 'contextCompaction', id: 'c1' }), turnCompleted()]);
+    expect(types(events)).toEqual(['turn.started', 'session.compacted', 'turn.ended']);
+  });
+});

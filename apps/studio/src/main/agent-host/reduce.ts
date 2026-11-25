@@ -331,7 +331,6 @@ const IGNORED_SYSTEM_SUBTYPES: ReadonlySet<string> = new Set([
   'task_notification',
   'notification',
   'informational',
-  'compact_boundary',
   'worker_shutting_down',
 ] satisfies readonly Extract<SDKMessage, { type: 'system' }>['subtype'][]);
 
@@ -644,6 +643,11 @@ export function handleSdkMessage(
           ...(kind === undefined ? {} : { kind }),
           raw: msg,
         });
+      } else if (msg.subtype === 'compact_boundary') {
+        const after = num(obj(msg.compact_metadata)?.post_tokens);
+        if (after === undefined) lastRequestUsage.delete(log);
+        else lastRequestUsage.set(log, { input_tokens: after });
+        log.push({ type: 'session.compacted' });
       } else if (!IGNORED_SYSTEM_SUBTYPES.has(String(msg.subtype))) {
         log.noteUnmapped(`system:${String(msg.subtype)}`);
       }

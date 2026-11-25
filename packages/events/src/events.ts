@@ -279,6 +279,8 @@ export type StudioEvent =
       /** The conversation that ended, so a replay marks it once and a later loss marks its own. */
       threadId: string;
     })
+  /** The agent summarised the conversation to free context, on request or on its own; the turn goes on. */
+  | (EventBase & { type: 'session.compacted' })
   /** Account-scoped: either provider can send it outside a turn, so it is not a `turn.*` shape (ONL-2197). */
   | (EventBase & { type: 'usage.limits'; windows: RateLimitWindow[] })
   /** One per failed attempt, and non-terminal: the turn is still live, so it is not a `session.error` (ONL-2491). */
@@ -543,6 +545,8 @@ export type ClientCommand =
   /** `null` clears the override. */
   | { type: 'session.setEffort'; effort: EffortLevel | null }
   | { type: 'session.setPermissionMode'; mode: PermissionMode }
+  /** Asks the agent to summarise the conversation so far; refused while a turn runs. */
+  | { type: 'session.compact' }
   | {
       type: 'prompt';
       text: string;
@@ -739,6 +743,7 @@ export type TranscriptItem =
     }
   | { kind: 'tools'; id: string; calls: ToolCallView[] }
   | { kind: 'boundary'; id: string; message: string }
+  | { kind: 'compacted'; id: string }
   | {
       kind: 'error';
       id: string;

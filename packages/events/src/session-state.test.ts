@@ -1226,3 +1226,16 @@ describe('the anchor a turn that has heard nothing leaves (ONL-2491)', () => {
     expect(state.silentSince).toBe(old);
   });
 });
+
+describe('session.compacted', () => {
+  it('lands as its own row between the turns it separates', () => {
+    const state = foldSessionState(
+      log(
+        { type: 'turn.started', turnId: 't1' },
+        { type: 'turn.ended', turnId: 't1', stopReason: 'end_turn' },
+        { type: 'session.compacted' },
+      ),
+    );
+    expect(state.items.at(-1)).toEqual({ kind: 'compacted', id: 'e3' });
+  });
+});

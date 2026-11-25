@@ -145,6 +145,7 @@ import {
   recordNextTasksOffered,
   recordHeldPromptResolved,
   recordQuestionEnded,
+  recordContextCompactRequested,
   recordPermissionModeChanged,
   recordAgentSwitched,
   recordChatNewStarted,
@@ -1173,6 +1174,12 @@ export class AgentHost {
           recordPermissionModeChanged({ mode: command.mode, harness });
         }
         return { accepted: applied };
+      }
+      case 'session.compact': {
+        if (session === undefined) return { accepted: false };
+        const accepted = await session.compact();
+        recordContextCompactRequested({ harness, accepted });
+        return { accepted };
       }
       case 'interrupt': {
         const ending = session === undefined ? undefined : this.questionEnding(session);

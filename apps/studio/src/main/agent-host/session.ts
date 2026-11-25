@@ -45,6 +45,7 @@ import { projectSkillBody, readProjectContext, type ProjectSkill } from './proje
 import type { AgentSkill } from '@studio/events';
 import { userEnvSync, type Env } from '../env/shell-env.js';
 import { pinClaudeConfigDir } from '../claude/env.js';
+import { autoCompactWindow } from '../settings/state.js';
 import { log } from '../log/index.js';
 import { claudeExecutablePath } from './cli-path.js';
 import { classifySessionError, classifyError } from './connection.js';
@@ -144,7 +145,13 @@ export interface AgentSessionOptions extends Partial<CanvasToolSinks> {
 /** `undefined` before the capture settles: the child then inherits `process.env`, which already carries the pin. */
 function claudeChildSdkEnv(): Env | undefined {
   const env = userEnvSync();
-  return env === undefined ? undefined : pinClaudeConfigDir(env);
+  return withAutoCompactWindow(env === undefined ? undefined : pinClaudeConfigDir(env), autoCompactWindow());
+}
+
+/** With no captured env the child inherits `process.env`, so that is what the variable extends. */
+export function withAutoCompactWindow(env: Env | undefined, window: number | undefined): Env | undefined {
+  if (window === undefined) return env;
+  return { ...(env ?? process.env), CLAUDE_CODE_AUTO_COMPACT_WINDOW: String(window) };
 }
 
 /** The SDK's own, narrowed to what a host may read; set only when an `ask` rule forced the prompt. */
@@ -539,6 +546,11 @@ export class AgentSession {
     this.setStreaming(true);
     this.emitState();
     return true;
+  }
+
+  async compact(): Promise<boolean> {
+    if (this.closed || this.isStreaming || this.isTurnLive) return false;
+    return this.prompt('/compact', [], undefined, 'studio', { origin: 'studio', hidden: true });
   }
 
   /** Each canvas sink the host gave, read when the tool calls it, else its detached answer. */

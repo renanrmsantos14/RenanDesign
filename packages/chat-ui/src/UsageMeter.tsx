@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { HStack, VStack } from '@astryxdesign/core/Layout';
+import { Button } from '@astryxdesign/core/Button';
 import { Divider } from '@astryxdesign/core/Divider';
 import { IconButton } from '@astryxdesign/core/IconButton';
 import { Popover } from '@astryxdesign/core/Popover';
@@ -26,6 +27,8 @@ export interface UsageMeterProps {
   contextDetail: string;
   limitsTitle: string;
   limits: UsageLimit[];
+  autoCompactLabel?: string;
+  compact?: { label: string; onClick: () => void; disabledReason?: string };
 }
 
 export type UsageSeverity = 'calm' | 'warn' | 'critical';
@@ -83,6 +86,14 @@ function Ring({ percent }: { percent: number }): React.JSX.Element {
         strokeDasharray={`${filled} ${CIRCUMFERENCE - filled}`}
         transform={`rotate(-90 ${RING_SIZE / 2} ${RING_SIZE / 2})`}
       />
+    </svg>
+  );
+}
+
+function MinimizeIcon(): React.JSX.Element {
+  return (
+    <svg width={14} height={14} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M2 6h4V2M14 6h-4V2M2 10h4v4M14 10h-4v4" />
     </svg>
   );
 }
@@ -154,6 +165,8 @@ export function UsageMeter({
   contextDetail,
   limitsTitle,
   limits,
+  autoCompactLabel,
+  compact,
 }: UsageMeterProps): React.JSX.Element {
   const [isOpen, setOpen] = useState(false);
 
@@ -167,7 +180,34 @@ export function UsageMeter({
           {contextTitle}
         </Text>
         <Text type="body">{contextDetail}</Text>
+        {autoCompactLabel === undefined ? null : (
+          <Text type="supporting" color="secondary" data-testid="chat-usage-auto-compact">
+            {autoCompactLabel}
+          </Text>
+        )}
       </VStack>
+      {compact === undefined ? null : (
+        <VStack gap={1} style={{ width: '100%' }}>
+          <Button
+            label={compact.label}
+            variant="secondary"
+            size="sm"
+            width="100%"
+            icon={<MinimizeIcon />}
+            isDisabled={compact.disabledReason !== undefined}
+            onClick={() => {
+              setOpen(false);
+              compact.onClick();
+            }}
+            data-testid="chat-usage-compact"
+          />
+          {compact.disabledReason === undefined ? null : (
+            <Text type="supporting" color="secondary" data-testid="chat-usage-compact-reason">
+              {compact.disabledReason}
+            </Text>
+          )}
+        </VStack>
+      )}
       {limits.length === 0 ? null : (
         <>
           <Divider />

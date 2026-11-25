@@ -44,6 +44,7 @@ const base: AgentSessionHandle = {
   setModel: accepted,
   setEffort: () => {},
   setPermissionMode: accepted,
+  compact: accepted,
 };
 let current = base;
 let updateSession: (next: AgentSessionHandle) => void;

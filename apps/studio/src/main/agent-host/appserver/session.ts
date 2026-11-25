@@ -74,6 +74,7 @@ import type { AppServerTurnState } from './translate.js';
 import { rememberAppServerThread, storedAppServerThread } from '../sessions.js';
 import { clearTranscript } from '../transcript.js';
 import { scheduleGc } from '../../images/store.js';
+import { autoCompactWindow } from '../../settings/state.js';
 import { AppServerTransport } from './transport.js';
 import type { SpawnOptions, TransportHandlers } from './transport.js';
 
@@ -580,6 +581,17 @@ export class AppServerSession implements AgentBackend {
     return Promise.resolve({ accepted: true });
   }
 
+  async compact(): Promise<boolean> {
+    if (this.closed || this.streaming || this.transport === undefined || this.threadId === undefined) return false;
+    try {
+      await this.transport.request('thread/compact/start', { threadId: this.threadId });
+      return true;
+    } catch (error) {
+      logger.warn('thread/compact/start failed', { error });
+      return false;
+    }
+  }
+
   async setEffort(effort: EffortLevel | null): Promise<void> {
     this.effort = effort ?? undefined;
     this.log.push({ type: 'session.settings', effort });
@@ -916,6 +928,8 @@ export class AppServerSession implements AgentBackend {
     if (this.opts.reasoningSummary !== undefined) {
       config['model_reasoning_summary'] = this.opts.reasoningSummary;
     }
+    const compactWindow = autoCompactWindow();
+    if (compactWindow !== undefined) config['model_auto_compact_token_limit'] = String(compactWindow);
 
     const handlers: TransportHandlers = {
       onFrame: (_raw, frame) => {

@@ -12,6 +12,7 @@ const strings = {
   responseDuration: '{seconds}s',
   responseDurationLong: '{minutes}m {seconds}s',
   composerPlaceholder: 'Ask',
+  compacted: 'Context compacted',
   composerPlaceholderQuestion: 'Answer',
   newMessages: 'New messages',
   scrollToBottom: 'Scroll to bottom',
@@ -21,6 +22,14 @@ const strings = {
 function render(items: TranscriptItem[], isStreaming = false, notificationSlot?: React.ReactNode): string {
   return renderToStaticMarkup(<ChatPanel state={{ ...emptyState, items, isStreaming }} connection={{ status: 'ok' }} strings={strings} composerValue="" onComposerChange={() => {}} onSend={() => {}} onInterrupt={() => {}} onRespond={() => {}} onCopy={() => {}} onRetry={() => {}} chevronIcon={() => <span />} {...(notificationSlot ? { notificationSlot } : {})} />);
 }
+
+describe('a compacted row', () => {
+  it('renders the discreet line from the strings bag', () => {
+    const html = render([{ kind: 'compacted', id: 'c1' }]);
+    expect(html).toContain('data-testid="chat-compacted"');
+    expect(html).toContain('Context compacted');
+  });
+});
 
 describe('chat scroll control wiring', () => {
   /* A server render always follows the bottom, so isVisible is false here and the glyph cannot be

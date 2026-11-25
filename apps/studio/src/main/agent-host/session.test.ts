@@ -7,6 +7,7 @@ import type { BackendState } from './backend.js';
 import { CLOSE_INTERRUPT_LIMIT_MS, DISPOSE_SESSION_LIMIT_MS } from './close-limits.js';
 import {
   AgentSession,
+  withAutoCompactWindow,
   CLAUDE_PERMISSION_MODES,
   DESTRUCTIVE_GIT_RULES,
   EXTERNALLY_VISIBLE_GIT_RULES,
@@ -1656,6 +1657,43 @@ describe('the permission mode the composer is shown (ONL-2190)', () => {
 
     expect(await session.setPermissionMode('plan')).toBe(false);
     expect(foldSessionState(emitted).permissionMode).toBe('default');
+  });
+});
+
+describe('a manual compaction', () => {
+  it('sends /compact through the prompt queue when idle', async () => {
+    const { sdk, session } = open();
+    expect(await session.compact()).toBe(true);
+    await drain();
+    expect(sdk.sent.map((m) => m.message.content)).toEqual(['/compact']);
+  });
+
+  it('is refused while a turn streams, and sends nothing', async () => {
+    const { sdk, session } = open();
+    session.prompt('first');
+    sdk.push(MESSAGE_START());
+    await drain();
+    expect(await session.compact()).toBe(false);
+    expect(sdk.sent.map((m) => m.message.content)).toEqual(['first']);
+  });
+
+  it('is refused once the session is closed', async () => {
+    const { session } = open();
+    await session.close();
+    expect(await session.compact()).toBe(false);
+  });
+});
+
+describe('the auto-compact window in the CLI environment', () => {
+  it('leaves the environment alone without a limit', () => {
+    const env = { A: '1' };
+    expect(withAutoCompactWindow(env, undefined)).toBe(env);
+    expect(withAutoCompactWindow(undefined, undefined)).toBeUndefined();
+  });
+
+  it('adds the limit as a string and keeps the rest', () => {
+    expect(withAutoCompactWindow({ A: '1' }, 300_000)).toEqual({ A: '1', CLAUDE_CODE_AUTO_COMPACT_WINDOW: '300000' });
+    expect(withAutoCompactWindow(undefined, 300_000)?.['CLAUDE_CODE_AUTO_COMPACT_WINDOW']).toBe('300000');
   });
 });
 

@@ -394,6 +394,9 @@ export function handleAppServerFrame(
         }
         case 'userMessage':
           return;
+        case 'contextCompaction':
+          log.push({ type: 'session.compacted' });
+          return;
         default: {
           log.endUnrowedCall(id, unrowedOutcome(item));
           log.noteUnmapped(`item/completed:${type}`);

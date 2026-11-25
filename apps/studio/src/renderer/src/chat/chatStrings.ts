@@ -109,6 +109,7 @@ export function chatStrings(agent: string, harnessId: HarnessId | undefined, isS
     },
     pen: penRowStrings(agent),
     thinkingLabel: t('chat.thinking'),
+    compacted: t('chat.compacted'),
     thoughtLabel: t('chat.thought'),
     newMessages: t('chat.newMessages'),
     scrollToBottom: t('chat.scrollToBottom'),

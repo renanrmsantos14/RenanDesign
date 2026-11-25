@@ -260,6 +260,15 @@ export interface TelemetryEventMap {
     feature: 'code_panel';
     enabled: boolean;
   };
+  /** Whether a limit is now configured; the token count never ships. */
+  auto_compact_window_changed: {
+    is_set: boolean;
+  };
+  /** The Compact context button, answered by the backend; no conversation content rides along. */
+  context_compact_requested: {
+    harness: 'claude' | 'codex';
+    accepted: boolean;
+  };
   notification_sound_changed: {
     enabled: boolean;
     sound: NotificationSound;
