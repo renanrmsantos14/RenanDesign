@@ -11,7 +11,7 @@ import { catalogFor, defaultPreference } from '../agent-host/preferences.js';
 import { storedHarness } from '../agent-host/sessions.js';
 import { broadcastToRenderers } from '../tabs/broadcast.js';
 import { resolvedHarness } from './resolve.js';
-import { analyticsEnabled, discoverCtaResolved, tipsPillDismissed, tourSeen, experimentalCodePanel, notificationSoundSettings, notificationSettings } from './state.js';
+import { analyticsEnabled, autoCompactWindow, discoverCtaResolved, tipsPillDismissed, tourSeen, experimentalCodePanel, notificationSoundSettings, notificationSettings } from './state.js';
 import { connectorsNoticeDismissed } from './state.js';
 import { storedTipsBaseline, telemetryConsent } from './state.js';
 
@@ -22,6 +22,7 @@ export function settingsState(): SettingsState {
   const notificationSound = notificationSoundSettings();
   const notifications = notificationSettings();
   const tipsBaseline = storedTipsBaseline();
+  const compactWindow = autoCompactWindow();
   return {
     analyticsEnabled: analyticsEnabled(),
     telemetryConsent: telemetryConsent(),
@@ -34,6 +35,7 @@ export function settingsState(): SettingsState {
     ...(connectorsNoticeDismissed() ? { connectorsNoticeDismissed: true } : {}),
     ...(tourSeen() ? { tourSeen: true } : {}),
     ...(tipsBaseline === undefined ? {} : { tipsBaseline }),
+    ...(compactWindow === undefined ? {} : { autoCompactWindow: compactWindow }),
   };
 }
 

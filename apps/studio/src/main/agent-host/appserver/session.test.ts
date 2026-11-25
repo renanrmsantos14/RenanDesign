@@ -2470,6 +2470,28 @@ describe('the permission mode codex publishes (ONL-2190)', () => {
   });
 });
 
+describe('a codex manual compaction', () => {
+  it('asks the app-server to compact the thread', async () => {
+    const { session, wire } = await openedSession();
+    expect(await session.compact()).toBe(true);
+    expect(wire.sent.find((request) => request.method === 'thread/compact/start')?.params).toMatchObject({ threadId: expect.any(String) });
+  });
+
+  it('is refused while a turn runs, and when the server refuses', async () => {
+    const { session, wire } = await openedSession();
+    session.prompt('work');
+    await until(() => startsSent(wire) === 1);
+    expect(await session.compact()).toBe(false);
+    expect(wire.sent.some((request) => request.method === 'thread/compact/start')).toBe(false);
+
+    const refusing = await openedSession((method) => {
+      if (method === 'thread/compact/start') throw new Error('no');
+      return HANDSHAKE(method);
+    });
+    expect(await refusing.session.compact()).toBe(false);
+  });
+});
+
 describe('a codex model pick (ONL-2542)', () => {
   test('offers GPT 6.1 Sol with its reported efforts and sends the selected model on the next turn (ONL-2741)', async () => {
     const { session, emitted, wire } = await openedSession((method) => method === 'model/list' ? {

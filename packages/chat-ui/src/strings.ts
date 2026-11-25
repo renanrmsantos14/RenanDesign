@@ -125,6 +125,7 @@ export interface ChatStrings {
   composerSend: string;
   composerStop: string;
   turnResumed: string;
+  compacted: string;
   nextTasksLabel: string;
   /** Studio's own setup prompt, drawn as its line instead of the prompt's text, while its turn runs and once it has ended (ONL-2913). */
   setupRunning: string;

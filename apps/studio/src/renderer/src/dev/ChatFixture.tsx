@@ -59,6 +59,7 @@ export const CHAT_FIXTURE_STRINGS: ChatStrings = {
   composerSend: 'Send',
   composerStop: 'Stop',
   turnResumed: 'Work resumed',
+  compacted: 'Context compacted',
   nextTasksLabel: 'Suggested next tasks',
   setupRunning: 'Setting up {repo}',
   setupEnded: 'Set up {repo}',

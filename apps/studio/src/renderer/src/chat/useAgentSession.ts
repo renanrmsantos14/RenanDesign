@@ -77,6 +77,7 @@ function sameRow(previous: TranscriptItem, next: TranscriptItem): boolean {
     case 'assistant-thinking':
     case 'tools':
     case 'boundary':
+    case 'compacted':
     case 'error':
       return sameValue(previous, next);
     default: {
@@ -137,6 +138,7 @@ export interface AgentSessionHandle {
   setEffort: (effort: EffortLevel | null) => void;
   /** The acceptance is the caller's business: main refuses a mode the backend does not enforce, and an optimistic label has to come back off (ONL-2190). */
   setPermissionMode: (mode: PermissionMode) => Promise<AgentCommandAcceptance>;
+  compact: () => Promise<AgentCommandAcceptance>;
 }
 
 export interface AgentPause {
@@ -459,6 +461,7 @@ export function useAgentSession(expectedCwd?: string): AgentSessionHandle {
     (mode: PermissionMode) => command({ type: 'session.setPermissionMode', mode }),
     [command],
   );
+  const compact = useCallback(() => command({ type: 'session.compact' }), [command]);
 
   return useMemo(
     () => ({
@@ -478,7 +481,8 @@ export function useAgentSession(expectedCwd?: string): AgentSessionHandle {
       setModel,
       setEffort,
       setPermissionMode,
+      compact,
     }),
-    [state, connection, sessionCwd, buffer.sessionId, send, interrupt, resume, newChat, switchAgent, respond, startSession, setModel, setEffort, setPermissionMode],
+    [state, connection, sessionCwd, buffer.sessionId, send, interrupt, resume, newChat, switchAgent, respond, startSession, setModel, setEffort, setPermissionMode, compact],
   );
 }

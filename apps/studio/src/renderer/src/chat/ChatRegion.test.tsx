@@ -41,6 +41,7 @@ const session: AgentSessionHandle = {
   setModel: accepted,
   setEffort: () => {},
   setPermissionMode: accepted,
+  compact: accepted,
 };
 let updateSession: (next: AgentSessionHandle) => void;
 mock.module('./useAgentSession.js', () => ({ useAgentSession: () => {

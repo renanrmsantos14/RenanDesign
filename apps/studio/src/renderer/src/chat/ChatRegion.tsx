@@ -446,6 +446,7 @@ export function ChatRegion(): React.JSX.Element {
   const leftHidden = useCanvasStore((state) => isRailHidden(state, 'left'));
   const leftPanelView = useCanvasStore((state) => state.leftPanelView);
   const codeEnabled = useSettingsStore((state) => state.experimentalCodePanel);
+  const autoCompactWindow = useSettingsStore((state) => state.autoCompactWindow);
   const statusInSidebar = isStatusListShown({ isEnabled: isFootOn, leftHidden, leftPanelView, codeEnabled });
   const workingRow = useMemo(
     () => (statusInSidebar ? undefined : workingRowCopy(workingRowState, resolveWorkingFrame)),
@@ -1228,7 +1229,12 @@ export function ChatRegion(): React.JSX.Element {
           composerSlots: shownComposerSlots,
           permission: { control: permissionControl, isInModelMenu: hasConnectors },
           isPlaceholderShimmering: isStartingFresh,
-          usage: { items: session.state.items, limits: planLimits(session.state.limits ?? []) },
+          usage: {
+            items: session.state.items,
+            limits: planLimits(session.state.limits ?? []),
+            ...(autoCompactWindow === undefined ? {} : { autoCompactWindow }),
+            compact: { isStreaming: session.state.isStreaming, hasSession: session.state.sessionId !== undefined, onCompact: () => void session.compact() },
+          },
           composerValue,
           attachments: composerAttachments,
           isComposerRestoring: recall.isRestoring,

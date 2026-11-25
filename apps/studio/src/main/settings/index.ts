@@ -13,10 +13,10 @@ import { noteHarnessDefaultChanged } from '../agent-host/index.js';
 import { rememberDefault } from '../agent-host/preferences.js';
 import { storedHarness } from '../agent-host/sessions.js';
 import { broadcastSettingsChanged, settingsDefaults, settingsState } from './changed.js';
-import { analyticsEnabled, dismissTipsPill, markTourSeen, resetTips, resolveDiscoverCta, setAnalyticsEnabled, setExperimentalCodePanel, setSettingsHarness, setNotificationSoundSettings } from './state.js';
+import { analyticsEnabled, dismissTipsPill, markTourSeen, resetTips, resolveDiscoverCta, setAnalyticsEnabled, setAutoCompactWindow, setExperimentalCodePanel, setSettingsHarness, setNotificationSoundSettings } from './state.js';
 import { dismissConnectorsNotice } from './state.js';
 import { capture, refreshTelemetryConsent } from '../telemetry/index.js';
-import { recordAgentDefaultChanged, recordExperimentalToggled } from './telemetry.js';
+import { recordAgentDefaultChanged, recordAutoCompactWindowChanged, recordExperimentalToggled } from './telemetry.js';
 import { log } from '../log/index.js';
 import { registerNotificationHandlers } from '../notifications/index.js';
 
@@ -61,6 +61,16 @@ export function registerSettingsHandlers(): void {
     if (moved) {
       broadcastSettingsChanged(next);
       recordExperimentalToggled(next.experimentalCodePanel === true);
+    }
+    return next;
+  });
+
+  handle(IPC_INVOKE.settingsSetAutoCompactWindow, (_event, value: unknown): SettingsState => {
+    const moved = setAutoCompactWindow(value);
+    const next = settingsState();
+    if (moved) {
+      broadcastSettingsChanged(next);
+      recordAutoCompactWindowChanged(next.autoCompactWindow !== undefined);
     }
     return next;
   });

@@ -7,6 +7,10 @@ export function recordExperimentalToggled(enabled: boolean): void {
   capture('experimental_toggled', { feature: 'code_panel', enabled });
 }
 
+export function recordAutoCompactWindowChanged(isSet: boolean): void {
+  capture('auto_compact_window_changed', { is_set: isSet });
+}
+
 const ID_SHAPE = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
 function enumeratedId(value: string | null | undefined): string | undefined {

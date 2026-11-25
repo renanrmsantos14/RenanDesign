@@ -1546,6 +1546,16 @@ const TranscriptRow = memo(function TranscriptRow({
         </VStack>
       );
 
+    case 'compacted':
+      return (
+        <VStack gap={2} width="100%" align="center" data-testid="chat-compacted">
+          <Divider />
+          <Text type="supporting" size="xsm" color="secondary" display="block" style={BOUNDARY_LINE}>
+            {strings.compacted}
+          </Text>
+        </VStack>
+      );
+
     case 'error': {
       if (failedTurn === undefined) return null;
       const reading = failureLine(item, failure.context, failedTurn, strings);
