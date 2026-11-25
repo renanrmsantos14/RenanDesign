@@ -51,6 +51,10 @@ export function recordPermissionModeChanged(input: {
   });
 }
 
+export function recordContextCompactRequested(input: { harness: SessionHarness; accepted: boolean }): void {
+  capture('context_compact_requested', { harness: telemetryHarness(input.harness), accepted: input.accepted });
+}
+
 export function recordPermissionDecided(input: {
   outcome: PermissionOutcome;
   harness: SessionHarness;

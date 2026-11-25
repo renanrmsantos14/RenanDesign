@@ -155,6 +155,12 @@ export function foldSessionState(events: readonly StudioEvent[]): SessionState {
         settleThinking(undefined, true);
         break;
 
+      case 'session.compacted':
+        closeToolGroup();
+        settleThinking(undefined, true);
+        items.push({ kind: 'compacted', id: e.eventId });
+        break;
+
       case 'session.boundary':
         closeToolGroup();
         settleThinking(undefined, true);

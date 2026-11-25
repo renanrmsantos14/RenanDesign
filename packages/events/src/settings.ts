@@ -20,6 +20,16 @@ export interface SettingsState {
   tourSeen?: boolean;
   /** Absent until the first launch with tip moments stamps it; Reset tips writes `projects: 0` (ONL-2960). */
   tipsBaseline?: TipsBaseline;
+  /** Tokens at which the agent compacts on its own; absent leaves the agent's default. */
+  autoCompactWindow?: number;
+}
+
+export const AUTO_COMPACT_WINDOW_MIN = 100_000;
+export const AUTO_COMPACT_WINDOW_MAX = 1_000_000;
+
+/** `undefined` for anything that is not a whole number of tokens inside the range. */
+export function autoCompactWindow(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isInteger(value) && value >= AUTO_COMPACT_WINDOW_MIN && value <= AUTO_COMPACT_WINDOW_MAX ? value : undefined;
 }
 
 export interface TipsBaseline {

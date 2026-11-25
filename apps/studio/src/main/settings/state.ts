@@ -1,5 +1,6 @@
 import {
   HARNESS_IDS,
+  autoCompactWindow as validAutoCompactWindow,
   isRecord,
   isNotificationSoundPreference,
   notificationPreference,
@@ -215,6 +216,27 @@ export function setAnalyticsEnabled(value: unknown): boolean {
   // The file now names the choice, so it answers for consent again.
   consentDenied = false;
   sourceDeclinedForLaunch = false;
+  return true;
+}
+
+export function autoCompactWindow(): number | undefined {
+  return validAutoCompactWindow(fields(domain.read()).autoCompactWindow);
+}
+
+/** `null` clears it back to the agent's default; anything else outside the range throws. */
+export function setAutoCompactWindow(value: unknown): boolean {
+  const next = value === null ? undefined : validAutoCompactWindow(value);
+  if (value !== null && next === undefined) throw new Error('Invalid auto-compact window');
+  if (autoCompactWindow() === next) return false;
+  try {
+    domain.update((current) => {
+      const { autoCompactWindow: _dropped, ...rest } = fields(current);
+      return next === undefined ? rest : { ...rest, autoCompactWindow: next };
+    });
+  } catch (error) {
+    domain.reset();
+    throw error;
+  }
   return true;
 }
 

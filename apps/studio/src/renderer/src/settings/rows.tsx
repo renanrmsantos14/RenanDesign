@@ -1,4 +1,4 @@
-import { Children, isValidElement, type ReactNode } from 'react';
+import { Children, isValidElement, useState, type ReactNode } from 'react';
 import { Button } from '@astryxdesign/core/Button';
 import { Card } from '@astryxdesign/core/Card';
 import { Divider } from '@astryxdesign/core/Divider';
@@ -6,8 +6,9 @@ import { HStack } from '@astryxdesign/core/HStack';
 import { Selector } from '@astryxdesign/core/Selector';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
+import { TextInput } from '@astryxdesign/core/TextInput';
 import { VStack } from '@astryxdesign/core/VStack';
-import { HARNESS_IDS, findModelChoice, modelLabel, type EffortLevel, type HarnessId, type ModelChoice, type SettingsState } from '@studio/events';
+import { AUTO_COMPACT_WINDOW_MAX, AUTO_COMPACT_WINDOW_MIN, HARNESS_IDS, autoCompactWindow as validAutoCompactWindow, findModelChoice, modelLabel, type EffortLevel, type HarnessId, type ModelChoice, type SettingsState } from '@studio/events';
 import { effortLabel } from '../chat/composerControls.js';
 import { t } from '@studio/i18n';
 import { ClaudeMarkIcon, OpenAiMarkIcon, modelMarkIcon } from '../icons/glyphs.js';
@@ -60,6 +61,56 @@ export function AnalyticsRow({ value, onChange, isSaving = false, saveFailed = f
         }
       />
       {saveFailed && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{t('settings.analytics.saveFailed')}</Text>}
+    </VStack>
+  );
+}
+
+export interface AutoCompactRowProps {
+  value: number | undefined;
+  onChange: (value: number | null) => void;
+  isSaving?: boolean;
+  saveFailed?: boolean;
+}
+
+/** `''` clears the limit; anything else must land in the range before it leaves the row. */
+export function parseAutoCompactDraft(draft: string): number | null | undefined {
+  const text = draft.replace(/[\s,._]/g, '');
+  if (text === '') return null;
+  return /^\d+$/.test(text) ? validAutoCompactWindow(Number(text)) : undefined;
+}
+
+export function AutoCompactRow({ value, onChange, isSaving = false, saveFailed = false }: AutoCompactRowProps): React.JSX.Element {
+  const [draft, setDraft] = useState(value === undefined ? '' : String(value));
+  const [isInvalid, setInvalid] = useState(false);
+  const commit = (): void => {
+    const parsed = parseAutoCompactDraft(draft);
+    setInvalid(parsed === undefined);
+    if (parsed !== undefined && parsed !== (value ?? null)) onChange(parsed);
+  };
+  return (
+    <VStack gap={0} width="100%">
+      <SettingsRow
+        label={t('settings.autoCompact.label')}
+        description={t('settings.autoCompact.description')}
+        testId="settings-auto-compact-row"
+        facts={{ min: String(AUTO_COMPACT_WINDOW_MIN), max: String(AUTO_COMPACT_WINDOW_MAX) }}
+        control={
+          <div onBlur={commit}>
+            <TextInput
+              label={t('settings.autoCompact.label')}
+              isLabelHidden
+              placeholder={t('settings.autoCompact.placeholder')}
+              value={draft}
+              onChange={(next) => { setDraft(next); setInvalid(false); }}
+              onEnter={commit}
+              isDisabled={isSaving}
+              data-testid="settings-auto-compact-input"
+            />
+          </div>
+        }
+      />
+      {isInvalid && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{t('settings.autoCompact.invalid')}</Text>}
+      {saveFailed && <Text type="supporting" role="alert" style={{ color: 'var(--color-error)', paddingInline: 'var(--spacing-5)', paddingBottom: 'var(--spacing-3)' }}>{t('settings.autoCompact.saveFailed')}</Text>}
     </VStack>
   );
 }

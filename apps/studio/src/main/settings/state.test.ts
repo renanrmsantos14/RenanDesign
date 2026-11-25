@@ -15,6 +15,8 @@ const {
   setNotificationSoundSettings,
   experimentalCodePanel,
   setExperimentalCodePanel,
+  autoCompactWindow,
+  setAutoCompactWindow,
   analyticsChoiceStored,
   analyticsEnabled,
   analyticsWithdrawn,
@@ -237,6 +239,38 @@ describe('experimental Code panel', () => {
       expect(() => setExperimentalCodePanel(value)).toThrow('Invalid Code panel preference');
       expect(experimentalCodePanel()).toBe(true);
     }
+  });
+});
+
+describe('auto-compact window', () => {
+  it('persists a value in range, reports no change on a repeat, and clears on null', () => {
+    const root = useOwnStateRoot('auto-compact-persist');
+    expect(autoCompactWindow()).toBeUndefined();
+    expect(setAutoCompactWindow(300_000)).toBe(true);
+    expect(setAutoCompactWindow(300_000)).toBe(false);
+    resetSettingsCache();
+    expect(autoCompactWindow()).toBe(300_000);
+    expect(settingsState().autoCompactWindow).toBe(300_000);
+    expect(JSON.parse(readFileSync(settingsPath(root), 'utf8')).data.autoCompactWindow).toBe(300_000);
+    expect(setAutoCompactWindow(null)).toBe(true);
+    expect(autoCompactWindow()).toBeUndefined();
+    expect(settingsState().autoCompactWindow).toBeUndefined();
+  });
+
+  it('accepts both bounds and refuses everything outside them without changing the saved value', () => {
+    useOwnStateRoot('auto-compact-validation');
+    expect(setAutoCompactWindow(100_000)).toBe(true);
+    expect(setAutoCompactWindow(1_000_000)).toBe(true);
+    for (const value of [99_999, 1_000_001, 300_000.5, '300000', NaN, undefined, {}]) {
+      expect(() => setAutoCompactWindow(value)).toThrow('Invalid auto-compact window');
+      expect(autoCompactWindow()).toBe(1_000_000);
+    }
+  });
+
+  it('ignores a hand-edited value outside the range', () => {
+    const root = useOwnStateRoot('auto-compact-edited');
+    seedSettings(root, { autoCompactWindow: 5 });
+    expect(autoCompactWindow()).toBeUndefined();
   });
 });
 

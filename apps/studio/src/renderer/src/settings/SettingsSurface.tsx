@@ -44,6 +44,10 @@ export function SettingsSurface(): React.JSX.Element {
   const setCodePanel = useSettingsStore((state) => state.setCodePanel);
   const isSaving = useSettingsStore((state) => state.isCodePanelSaving);
   const saveFailed = useSettingsStore((state) => state.codePanelSaveFailed);
+  const autoCompactWindow = useSettingsStore((s) => s.autoCompactWindow);
+  const setAutoCompactWindow = useSettingsStore((s) => s.setAutoCompactWindow);
+  const isAutoCompactSaving = useSettingsStore((s) => s.isAutoCompactSaving);
+  const autoCompactSaveFailed = useSettingsStore((s) => s.autoCompactSaveFailed);
   const harness = useSettingsStore((s) => s.harness);
   const setHarness = useSettingsStore((s) => s.setHarness);
   const defaults = useSettingsStore((s) => s.defaults);
@@ -104,6 +108,7 @@ export function SettingsSurface(): React.JSX.Element {
         onSetUp={onSetUp}
         models={models}
         effort={effort}
+        autoCompact={{ value: autoCompactWindow, onChange: (next) => void setAutoCompactWindow(next), isSaving: isAutoCompactSaving, saveFailed: autoCompactSaveFailed }}
         {...(isTipsResetOffered ? { tips: { state: tipsState, onReset: onResetTips } } : {})}
       />}
       {open === null ? null : (

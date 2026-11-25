@@ -281,6 +281,7 @@ export const CHANNELS = {
     settingsSetHarness: { name: 'settings:setHarness', from: TAB, request: one<SetHarnessRequest>(), response: of<SettingsState>(), tab: 'settingsSetHarness' },
     settingsSetNotificationSound: { name: 'settings:setNotificationSound', from: TAB, request: one<NotificationSoundPreference>(), response: of<SettingsState>(), tab: 'settingsSetNotificationSound' },
     notificationAction: { name: 'notifications:action', from: TAB, request: one<NotificationAction>(), response: of<SettingsState>(), tab: 'notificationAction' },
+    settingsSetAutoCompactWindow: { name: 'settings:setAutoCompactWindow', from: TAB, request: one<number | null>(), response: of<SettingsState>(), tab: 'settingsSetAutoCompactWindow' },
     settingsSetCodePanel: { name: 'settings:setCodePanel', from: TAB, request: one<boolean>(), response: of<SettingsState>(), tab: 'settingsSetCodePanel' },
     settingsSetAnalytics: { name: 'settings:setAnalytics', from: TAB, request: one<boolean>(), response: of<SettingsState>(), tab: 'settingsSetAnalytics' },
     /** One direction: a resolved card never comes back, so there is no request shape and no un-resolve (ONL-2443). */

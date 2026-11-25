@@ -200,6 +200,8 @@ export function permissionModeControls(input: {
 export function usageMeter(input: {
   items: readonly TranscriptItem[];
   limits?: UsageLimit[];
+  autoCompactWindow?: number;
+  compact?: { isStreaming: boolean; hasSession: boolean; onCompact: () => void };
 }): UsageMeterProps {
   let tokens: TurnTokens | undefined;
   for (let i = input.items.length - 1; i >= 0; i -= 1) {
@@ -242,7 +244,16 @@ export function usageMeter(input: {
       : t('chat.usage.contextEmpty'),
     limitsTitle: t('chat.usage.limitsTitle'),
     limits,
+    ...(input.autoCompactWindow === undefined
+      ? {}
+      : { autoCompactLabel: t('chat.usage.autoCompactAt', { limit: formatTokens(input.autoCompactWindow) }) }),
+    ...(input.compact === undefined ? {} : { compact: compactControl(input.compact) }),
   };
+}
+
+function compactControl(input: { isStreaming: boolean; hasSession: boolean; onCompact: () => void }): NonNullable<UsageMeterProps['compact']> {
+  const reason = !input.hasSession ? t('chat.usage.compactNoSession') : input.isStreaming ? t('chat.usage.compactStreaming') : undefined;
+  return { label: t('chat.usage.compact'), onClick: input.onCompact, ...(reason === undefined ? {} : { disabledReason: reason }) };
 }
 
 const TITLE_KEYS = {

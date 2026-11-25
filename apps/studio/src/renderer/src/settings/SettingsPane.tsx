@@ -8,6 +8,7 @@ import { NotificationSettingsRow, type NotificationControls } from '../notificat
 import {
   DefaultAgentRow,
   AnalyticsRow,
+  AutoCompactRow,
   ResetTipsRow,
   DefaultEffortRow,
   DefaultModelRow,
@@ -17,6 +18,7 @@ import {
   type DefaultEffortRowProps,
   type DefaultModelRowProps,
   type AnalyticsRowProps,
+  type AutoCompactRowProps,
   type ResetTipsRowProps,
 } from './rows.js';
 
@@ -38,6 +40,7 @@ export interface SettingsSectionsProps {
   /** The Thinking effort row, under Model. */
   effort?: DefaultEffortRowProps;
   tips?: ResetTipsRowProps;
+  autoCompact?: AutoCompactRowProps;
 }
 
 /** The sections alone, for a column whose header already carries the title (the projects view). */
@@ -52,6 +55,7 @@ export function SettingsSections({
   notifications,
   analytics,
   tips,
+  autoCompact,
 }: SettingsSectionsProps): React.JSX.Element {
   return (
     <VStack className="settings-pane" gap={8} style={{ ...COLUMN, ...PANE_LEADING }} data-testid={SETTINGS_TESTIDS.pane}>
@@ -59,6 +63,7 @@ export function SettingsSections({
         <DefaultAgentRow value={agent} readiness={readiness} onChange={onAgentChange} onSetUp={onSetUp} billingLabel={billingLabel} />
         {models !== undefined && <DefaultModelRow {...models} />}
         {effort !== undefined && <DefaultEffortRow {...effort} />}
+        {autoCompact !== undefined && <AutoCompactRow {...autoCompact} />}
       </SettingsSection>
       {notifications !== undefined && <SettingsSection label={t('notifications.title')} testId="settings-section-notifications"><NotificationSettingsRow {...notifications} /></SettingsSection>}
       {analytics !== undefined && <SettingsSection label={t(analytics.consent === undefined ? 'settings.analytics.title' : 'telemetry.settings.section')} testId="settings-section-analytics"><AnalyticsRow {...analytics} /></SettingsSection>}

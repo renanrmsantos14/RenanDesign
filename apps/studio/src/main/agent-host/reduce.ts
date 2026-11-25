@@ -331,7 +331,6 @@ const IGNORED_SYSTEM_SUBTYPES: ReadonlySet<string> = new Set([
   'task_notification',
   'notification',
   'informational',
-  'compact_boundary',
   'worker_shutting_down',
 ] satisfies readonly Extract<SDKMessage, { type: 'system' }>['subtype'][]);
 
@@ -408,6 +407,9 @@ function resultProse(msg: SdkMessage): string | undefined {
 
 /** The turn's last `assistant` message carries the per-request usage; `result.usage` is summed over every request of the turn (ONL-2381). */
 const lastRequestUsage = new WeakMap<EventLog, Record<string, unknown>>();
+
+/** Where compaction left the context; a compact-only turn has no request of its own to read it from. */
+const compactedContext = new WeakMap<EventLog, number>();
 
 /** The model that produced the last request, so a subagent turn's `modelUsage` can be disambiguated (ONL-2197). */
 const lastRequestModel = new WeakMap<EventLog, string>();
@@ -644,6 +646,12 @@ export function handleSdkMessage(
           ...(kind === undefined ? {} : { kind }),
           raw: msg,
         });
+      } else if (msg.subtype === 'compact_boundary') {
+        // The usage read before the boundary is the pre-compaction context.
+        lastRequestUsage.delete(log);
+        const after = num(obj(msg.compact_metadata)?.post_tokens);
+        if (after !== undefined) compactedContext.set(log, after);
+        log.push({ type: 'session.compacted' });
       } else if (!IGNORED_SYSTEM_SUBTYPES.has(String(msg.subtype))) {
         log.noteUnmapped(`system:${String(msg.subtype)}`);
       }
@@ -835,8 +843,10 @@ export function handleSdkMessage(
         opts.onCost?.({ totalCostUsd, costDeltaUsd });
       }
 
+      const compactedTo = compactedContext.get(log);
+      compactedContext.delete(log);
       const tokens = resultTokens(
-        lastRequestUsage.get(log),
+        lastRequestUsage.get(log) ?? (compactedTo === undefined ? undefined : { input_tokens: compactedTo }),
         obj(msg.modelUsage),
         lastRequestModel.get(log),
       );

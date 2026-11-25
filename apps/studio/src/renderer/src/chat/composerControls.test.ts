@@ -295,6 +295,29 @@ describe('usageMeter', () => {
   });
 });
 
+describe('usageMeter compaction', () => {
+  const onCompact = (): void => undefined;
+
+  it('offers the button when the session is idle', () => {
+    const meter = usageMeter({ items: [], compact: { isStreaming: false, hasSession: true, onCompact } });
+    expect(meter.compact).toEqual({ label: t('chat.usage.compact'), onClick: onCompact });
+  });
+
+  it('disables it with the reason while streaming or without a session', () => {
+    const streaming = usageMeter({ items: [], compact: { isStreaming: true, hasSession: true, onCompact } });
+    expect(streaming.compact?.disabledReason).toBe(t('chat.usage.compactStreaming'));
+    const none = usageMeter({ items: [], compact: { isStreaming: false, hasSession: false, onCompact } });
+    expect(none.compact?.disabledReason).toBe(t('chat.usage.compactNoSession'));
+  });
+
+  it('names the active auto-compact limit, and omits both without input', () => {
+    expect(usageMeter({ items: [], autoCompactWindow: 300_000 }).autoCompactLabel).toBe(t('chat.usage.autoCompactAt', { limit: '300k' }));
+    const plain = usageMeter({ items: [] });
+    expect(plain.autoCompactLabel).toBeUndefined();
+    expect(plain.compact).toBeUndefined();
+  });
+});
+
 describe('formatTokens', () => {
   it('says 1M for a million-token window, one decimal only when non-zero (ONL-2381)', () => {
     expect(formatTokens(1_000_000)).toBe('1M');

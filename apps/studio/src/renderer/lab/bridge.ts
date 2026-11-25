@@ -355,6 +355,7 @@ const answers: Omit<StudioBridge, Inert> & Partial<Pick<StudioBridge, Inert>> = 
   // The first-run tour shows only under `?tour`, so the lab opens on the editor otherwise.
   settingsState: async () => (new URLSearchParams(window.location.search).has('tour') ? {} : { tourSeen: true }),
   settingsSetHarness: async ({ harness }) => ({ harness }),
+  settingsSetAutoCompactWindow: async (window) => (window === null ? {} : { autoCompactWindow: window }),
   settingsSetCodePanel: async (experimentalCodePanel) => ({ experimentalCodePanel }),
   settingsSetAnalytics: async (analyticsEnabled) => ({ analyticsEnabled }),
   settingsSetNotificationSound: async (notificationSound) => ({ notificationSound }),

@@ -179,6 +179,26 @@ const CATEGORIES: Category[] = [
         ),
       },
       {
+        id: 'usage-panel-compact',
+        title: 'Compact context',
+        note: 'The button ends the panel; the line above it names the limit the agent compacts at. Press the ring.',
+        render: () => (
+          <Ground>
+            <UsageMeter {...meter(78, { autoCompactLabel: 'Compacts automatically at 300k', compact: { label: 'Compact context', onClick: () => undefined } })} />
+          </Ground>
+        ),
+      },
+      {
+        id: 'usage-panel-compact-disabled',
+        title: 'Compact context, while the agent works',
+        note: 'Refused mid-turn: the button is disabled and says why instead of sitting there silently.',
+        render: () => (
+          <Ground>
+            <UsageMeter {...meter(78, { compact: { label: 'Compact context', onClick: () => undefined, disabledReason: 'Wait for the reply to finish.' } })} />
+          </Ground>
+        ),
+      },
+      {
         id: 'usage-panel-with-limits',
         title: 'With plan limits',
         note: 'The designed target. The rows are fixtures — the Agent SDK reports these windows on `SDKRateLimitEvent`, and nothing is wired to it yet.',

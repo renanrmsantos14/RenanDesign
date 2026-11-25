@@ -122,6 +122,31 @@ describe('toolKind', () => {
   });
 });
 
+describe('a compact boundary', () => {
+  it('announces the compaction and reads the next context from its post-compaction size', () => {
+    const { log, emitted } = makeLog();
+    handleSdkMessage(
+      log,
+      { type: 'assistant', message: { content: [], usage: { input_tokens: 150_000, output_tokens: 10 } } },
+      {},
+    );
+    handleSdkMessage(
+      log,
+      { type: 'system', subtype: 'compact_boundary', compact_metadata: { trigger: 'manual', pre_tokens: 150_000, post_tokens: 12_000 } },
+      {},
+    );
+    handleSdkMessage(
+      log,
+      { type: 'result', subtype: 'success', usage: { input_tokens: 1 }, modelUsage: { m: { contextWindow: 200_000 } } },
+      {},
+    );
+    expect(types(emitted)).toContain('session.compacted');
+    const ended = emitted.find((e) => e.type === 'turn.ended');
+    if (ended?.type !== 'turn.ended') throw new Error('shape');
+    expect(ended.tokens?.context).toBe(12_000);
+  });
+});
+
 describe('turn end', () => {
   it('reads context from the LAST assistant message of the turn, never the summed result usage (ONL-2381)', () => {
     const { log, emitted } = makeLog();

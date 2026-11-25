@@ -62,6 +62,9 @@ export interface AgentBackend {
   /** `context` joins what the model reads, never the transcript row; `origin` stamps the row (ONL-2179); mid-turn a `user` prompt joins the running turn (ONL-2180). */
   prompt(text: string, attachments?: PromptAttachment[], context?: string, origin?: PromptOrigin, display?: { origin: PromptOrigin; hidden?: true }): boolean;
 
+  /** Summarises the conversation to free context; `false` while a turn runs or when the backend is not ready. */
+  compact(): Promise<boolean>;
+
   /** Refused when the backend does not enforce that mode; the composer only offers enforced ones (ONL-2190). */
   setPermissionMode(mode: PermissionMode): Promise<boolean>;
   /** `false` when no held request matched, so an answer is never reported as accepted (ONL-2190). */

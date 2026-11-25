@@ -24,6 +24,10 @@ interface SettingsStore {
   isCodePanelSaving: boolean;
   codePanelSaveFailed: boolean;
   setCodePanel: (enabled: boolean) => Promise<void>;
+  autoCompactWindow: number | undefined;
+  isAutoCompactSaving: boolean;
+  autoCompactSaveFailed: boolean;
+  setAutoCompactWindow: (value: number | null) => Promise<void>;
   notificationSound: NotificationSoundPreference;
   setNotificationSound: (preference: NotificationSoundPreference) => Promise<void>;
   harness: HarnessId;
@@ -104,6 +108,22 @@ const useSettingsStore = create<SettingsStore>()((set) => ({
       set({ isCodePanelSaving: false });
     }
   },
+  autoCompactWindow: undefined,
+  isAutoCompactSaving: false,
+  autoCompactSaveFailed: false,
+  setAutoCompactWindow: async (value) => {
+    if (useSettingsStore.getState().isAutoCompactSaving) return;
+    set({ isAutoCompactSaving: true, autoCompactSaveFailed: false });
+    const revision = settingsRevision;
+    try {
+      const answer = await studio().settingsSetAutoCompactWindow(value);
+      if (revision === settingsRevision) useSettingsStore.getState().apply(answer);
+    } catch {
+      set({ autoCompactSaveFailed: true });
+    } finally {
+      set({ isAutoCompactSaving: false });
+    }
+  },
   notificationSound: { ...DEFAULT_NOTIFICATION_SOUND },
   harness: DISPLAY_DEFAULT_HARNESS,
   defaults: NO_DEFAULTS,
@@ -120,6 +140,7 @@ const useSettingsStore = create<SettingsStore>()((set) => ({
       analyticsEnabled: state.analyticsEnabled !== false,
       telemetryConsent: state.telemetryConsent,
       experimentalCodePanel: state.experimentalCodePanel === true,
+      autoCompactWindow: state.autoCompactWindow,
       notificationSound: notificationSoundPreference(state.notificationSound),
       notifications: notificationPreference(state.notifications),
       isPrimed: true,
@@ -215,5 +236,5 @@ export function resetSettingsPrimeForTests(): void {
   const { apply, applyDefaults } = useSettingsStore.getState();
   apply({});
   applyDefaults(NO_DEFAULTS);
-  useSettingsStore.setState({ isPrimed: false, isDiscoverResolvedInSession: false, isCodePanelSaving: false, codePanelSaveFailed: false, isAnalyticsSaving: false, analyticsSaveFailed: false });
+  useSettingsStore.setState({ isPrimed: false, isDiscoverResolvedInSession: false, isCodePanelSaving: false, codePanelSaveFailed: false, isAnalyticsSaving: false, analyticsSaveFailed: false, isAutoCompactSaving: false, autoCompactSaveFailed: false });
 }
