@@ -11,5 +11,16 @@
   "update.prompt.empty": "This version only has behind-the-scenes changes.",
   "update.prompt.restartNote": "RenanDesign restarts when the download finishes.",
   "update.prompt.now": "Update Now",
-  "update.prompt.later": "Later"
+  "update.prompt.later": "Later",
+  "update.progress.downloading": "Downloading the update",
+  "update.progress.installing": "Installing the update",
+  "update.progress.failed": "The update didn't finish",
+  "update.progress.version": "Version {version}",
+  "update.progress.bar": "Update progress",
+  "update.progress.downloadingDetail": "You can keep working. RenanDesign restarts when the download finishes.",
+  "update.progress.installingDetail": "RenanDesign is closing to install version {version}. It reopens on its own in a few seconds.",
+  "update.progress.failedDetail": "RenanDesign will offer this version again later. Your work is safe.",
+  "update.progress.hide": "Hide",
+  "update.progress.close": "Close",
+  "update.applied": "RenanDesign is now on version {version}"
 }
