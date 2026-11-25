@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
 import { Icon, type IconType } from '@astryxdesign/core/Icon';
 import type { CentralIconBaseProps } from '@central-icons-react/round-outlined-radius-1-stroke-1.5/CentralIconBase';
-import type { GitCardStateId, GitPillGlyphs, GitPillStateId, GitStatusStrings } from '@studio/git-ui';
+import type { GitCardStateId, GitPillGlyphs, GitPillStateId, GitPullRequestPanelStrings, GitStatusStrings } from '@studio/git-ui';
 import {
   BranchIcon,
   CheckIcon,
@@ -73,6 +73,37 @@ export const GIT_STATUS_STRINGS: GitStatusStrings = {
   openPrAria: t('gitStatus.openPrAria'),
   openMenuAria: t('gitStatus.openMenuAria'),
   separator: t('gitStatus.separator'),
+};
+
+export const GIT_PR_PANEL_STRINGS: GitPullRequestPanelStrings = {
+  heading: t('gitStatus.prPanel.heading'),
+  loading: t('gitStatus.prPanel.loading'),
+  empty: t('gitStatus.prPanel.empty'),
+  failed: t('gitStatus.prPanel.failed'),
+  noGithub: t('gitStatus.prPanel.noGithub'),
+  title: t('gitStatus.prPanel.title'),
+  base: t('gitStatus.prPanel.base'),
+  state: {
+    open: t('gitStatus.prPanel.state.open'),
+    draft: t('gitStatus.prPanel.state.draft'),
+    merged: t('gitStatus.prPanel.state.merged'),
+    closed: t('gitStatus.prPanel.state.closed'),
+  },
+  check: {
+    passing: t('gitStatus.prPanel.check.passing'),
+    failing: t('gitStatus.prPanel.check.failing'),
+    pending: t('gitStatus.prPanel.check.pending'),
+    skipped: t('gitStatus.prPanel.check.skipped'),
+  },
+  noChecks: t('gitStatus.prPanel.noChecks'),
+  merge: t('gitStatus.prPanel.merge'),
+  confirmMerge: t('gitStatus.prPanel.confirmMerge'),
+  cancel: t('gitStatus.prPanel.cancel'),
+  merging: t('gitStatus.prPanel.merging'),
+  mergeFailed: {
+    'not-mergeable': t('gitStatus.prPanel.mergeFailed.not-mergeable'),
+    failed: t('gitStatus.prPanel.mergeFailed.failed'),
+  },
 };
 
 const glyph = (icon: IconType): React.ReactNode => <Icon icon={icon} size="sm" color="inherit" />;

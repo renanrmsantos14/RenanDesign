@@ -72,3 +72,28 @@ export interface GitPillDefaults {
 export const GIT_PILL_SHIPPED_DEFAULTS: GitPillDefaults = { noPr: 'create-pr', ready: 'open-in-browser' };
 
 export type GitPillDefaultsPatch = Partial<GitPillDefaults>;
+
+export type GitCheckState = 'passing' | 'failing' | 'pending' | 'skipped';
+
+export interface GitPullRequestCheck {
+  name: string;
+  state: GitCheckState;
+  url?: string;
+}
+
+export interface GitPullRequestDetail {
+  number: number;
+  title: string;
+  url: string;
+  state: GitPrState;
+  isDraft: boolean;
+  baseRefName: string;
+  checks: GitPullRequestCheck[];
+  canMerge: boolean;
+}
+
+export type GitPullRequestList =
+  | { ok: true; pulls: GitPullRequestDetail[] }
+  | { ok: false; reason: 'no-github' | 'failed' };
+
+export type GitMergeResult = { ok: true } | { ok: false; reason: 'not-mergeable' | 'failed' };

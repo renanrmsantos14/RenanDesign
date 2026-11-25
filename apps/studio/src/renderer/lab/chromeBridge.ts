@@ -86,6 +86,8 @@ const bridge: StudioChromeBridge = {
     return () => slotListeners.delete(listener);
   },
   windowFocus: async () => ({ isFocused: true }),
+  gitPullRequests: async () => ({ ok: false, reason: 'no-github' }),
+  gitMerge: async () => ({ ok: false, reason: 'not-mergeable' }),
   onWindowFocus: () => () => undefined,
   /* The app's chrome view never has the keyboard, so main reads ⌘; here the band is the page and watches its own keys. */
   onChordHint: (listener) => {
