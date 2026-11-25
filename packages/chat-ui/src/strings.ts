@@ -145,7 +145,7 @@ export interface ChatStrings {
 
   /** Composer. */
   composerPlaceholder: string;
-  /** While a turn runs that a send can steer: Enter steers, the modifier queues. */
+  /** While a turn runs that a send can steer: Enter queues, the modifier steers. */
   composerPlaceholderRunning: string;
   composerPlaceholderDisconnected: string;
   /** While a question is open: the composer's send answers it (ONL-2583). */

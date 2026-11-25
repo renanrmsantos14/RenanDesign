@@ -53,12 +53,11 @@ export interface ComposerFollowUpState {
 
 export type ComposerFollowUp = 'steer' | 'queue' | 'send-pen';
 
-/** Mid-turn, Enter steers and Mod+Enter queues; Mod+Enter on an empty composer sends the waiting prompt now. */
+/** Mid-turn, Enter queues and Mod+Enter steers; Mod+Enter on an empty composer sends the waiting prompt now. */
 export function resolveComposerFollowUp(state: ComposerFollowUpState): ComposerFollowUp {
-  const isModEnter = state.key === 'Enter' && !state.shiftKey && !state.isComposing && state.keyCode !== 229 && (state.metaKey || state.ctrlKey);
-  if (!state.isStreaming || !isModEnter) return 'steer';
-  if (state.isEmpty) return state.canSendPen ? 'send-pen' : 'steer';
-  return 'queue';
+  if (!state.isStreaming || state.key !== 'Enter' || state.shiftKey || state.isComposing || state.keyCode === 229) return 'steer';
+  if (!(state.metaKey || state.ctrlKey)) return 'queue';
+  return state.isEmpty && state.canSendPen ? 'send-pen' : 'steer';
 }
 
 export interface ComposerRecallState {

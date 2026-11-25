@@ -70,7 +70,7 @@ export const CHAT_FIXTURE_STRINGS: ChatStrings = {
   },
   composerPlaceholderDisconnected: 'Disconnected',
   composerPlaceholderQuestion: 'Answer above, or reply here…',
-  composerPlaceholderRunning: 'Enter to add to this turn, ⌘↩ to send after it',
+  composerPlaceholderRunning: 'Enter to send after this turn, ⌘↩ to add to it now',
   composerPlaceholderSkill: 'Add arguments, or send as is',
   approvalPrompt: 'Allow this?',
   questionSheet: { next: 'Next', send: 'Send', dismiss: 'Dismiss', goToQuestion: 'Question {n}', step: '{at} of {total}', ownWords: 'Type response…', dismissedOne: 'Question dismissed', dismissedMany: 'Questions dismissed' },

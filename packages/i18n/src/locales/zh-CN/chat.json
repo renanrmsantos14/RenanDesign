@@ -179,7 +179,7 @@
   "chat.image.unavailable": "图片不可用",
   "chat.composer.placeholder": "描述想要的修改…",
   "chat.composer.placeholderFresh": "描述想设计的内容…",
-  "chat.composer.placeholderRunning": "按 Enter 加入当前回合，按 {shortcut} 在结束后发送",
+  "chat.composer.placeholderRunning": "按 Enter 在本回合结束后发送，按 {shortcut} 立即加入当前回合",
   "chat.composer.placeholderQuestion": "在上方回答，或在此回复…",
   "chat.composer.placeholderSkill": "添加参数，或直接发送",
   "chat.composer.disconnected": "{agent} 不可用",

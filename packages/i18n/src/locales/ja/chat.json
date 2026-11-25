@@ -179,7 +179,7 @@
   "chat.image.unavailable": "画像を表示できません",
   "chat.composer.placeholder": "変更を依頼…",
   "chat.composer.placeholderFresh": "デザインしたいものを説明してください…",
-  "chat.composer.placeholderRunning": "Enter で今のターンに追加、{shortcut} で終了後に送信",
+  "chat.composer.placeholderRunning": "Enter でターン終了後に送信、{shortcut} で今のターンに追加",
   "chat.composer.placeholderQuestion": "上で回答するか、ここに返信…",
   "chat.composer.placeholderSkill": "引数を追加するか、そのまま送信",
   "chat.composer.disconnected": "{agent} は利用できません",
